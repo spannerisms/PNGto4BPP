@@ -38,6 +38,8 @@ import java.io.FileInputStream;
 
 // class
 public class PNGto4BPP {
+	static final String VERSION = "v1.3";
+
 	// to spit out errors
 	public PNGto4BPP() {super();}
 	static final PNGto4BPP controller = new PNGto4BPP();
@@ -61,7 +63,7 @@ public class PNGto4BPP {
 				"Extract from last block of PNG"
 				};
 	static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
-	static final JFrame frame = new JFrame("PNG to SNES 4BPP");
+	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
 
 	static StringWriter debugLogging;
 	static PrintWriter debugWriter;
@@ -95,7 +97,7 @@ public class PNGto4BPP {
 		} // end metal
 
 		// window building
-		final JFrame frame = new JFrame("PNG to SNES 4BPP");
+		final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
 		final JFrame debugFrame = new JFrame("Debug");
 		final JFrame aboutFrame = new JFrame("About");
 		final Dimension d = new Dimension(600,382);
@@ -138,6 +140,10 @@ public class PNGto4BPP {
 		peepsList.append("\n\nIcon by:\n");
 		peepsList.append(join(new String[]{
 				"Hoodyha"
+				}, ", "));
+		peepsList.append("\n\nUpdates at:\n");
+		peepsList.append(join(new String[]{
+				"http://github.com/fatmanspanda/ALttPNG/wiki"
 				}, ", "));
 		aboutFrame.add(peepsList);
 		// debug text
@@ -352,9 +358,14 @@ public class PNGto4BPP {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (testFileType(n,EXPORTEXTS)) {
-						fileName.setText(n);
+					if (!testFileType(n,EXPORTEXTS)) {
+						if(n.contains(".")) {
+							n = n.split(".")[0] + ".spr";
+						} else {
+							n = n + ".spr";
+						}
 					}
+					fileName.setText(n);
 				}
 			}});
 
@@ -626,12 +637,16 @@ public class PNGto4BPP {
 
 		// only allow sprite/ROM files
 		if (!testFileType(loc,EXPORTEXTS)) {
-			JOptionPane.showMessageDialog(frame,
-					"Export location must be of the following extensions:\n" +
-					join(EXPORTEXTS,", "),
-					"Oops",
-					JOptionPane.WARNING_MESSAGE);
-			extensionERR = true;
+			if(loc.contains(".")) {
+				JOptionPane.showMessageDialog(frame,
+						"Export location must be of the following extensions:\n" +
+								join(EXPORTEXTS,", "),
+								"Oops",
+								JOptionPane.WARNING_MESSAGE);
+				extensionERR = true;
+			} else {
+				loc = loc + ".spr";
+			}
 		}
 
 		// break if any extension related errors
@@ -782,7 +797,7 @@ public class PNGto4BPP {
 			JOptionPane.showMessageDialog(frame,
 				"Sprite file successfully " +
 				(patchingROM ? "patched" : "written") +
-				" to " + (new File(loc).getName()),
+				" to:" + "\n" + (new File(loc).getName()),
 				"YAY",
 				JOptionPane.PLAIN_MESSAGE);
 		}		
