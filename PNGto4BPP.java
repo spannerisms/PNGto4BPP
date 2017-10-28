@@ -38,32 +38,33 @@ import java.io.FileInputStream;
 
 // class
 public class PNGto4BPP {
+	// version number
 	static final String VERSION = "v1.3";
 
 	// to spit out errors
 	public PNGto4BPP() {super();}
 	static final PNGto4BPP controller = new PNGto4BPP();
 	// accepted extensions
-	static final String[] IMAGEEXTS = { "png" };
-	static final String[] PALETTEEXTS = { "gpl", "pal", "txt" };
-	static final String[] BINARYEXTS = { "pal" };
-	static final String[] SPREXTS = { "spr" };
-	static final String[] ROMEXTS = { "sfc" };
-	static final String[] EXPORTEXTS = { "spr", "sfc" };
-	static final String[] LOGEXTS = { "txt" };
+	static final String[] IMAGEEXTS		= { "png" };				// image			import types
+	static final String[] PALETTEEXTS	= { "gpl", "pal", "txt" };	// ascii	palette	import types
+	static final String[] BINARYEXTS	= { "pal" };				// binary	palette	import types
+	static final String[] SPREXTS		= { "spr" };				// sprite file		import types
+	static final String[] ROMEXTS		= { "sfc" };				// rom file			import types
+	static final String[] EXPORTEXTS	= { "spr", "sfc" };			// export types
+	static final String[] LOGEXTS		= { "txt" };				// debug file types
 
 	//These fields are utilized by functions
-	static final JTextField imageName = new JTextField("");
-	static final JTextField palName = new JTextField("");
-	static final JTextField fileName = new JTextField("");
+	static final JTextField imageName	= new JTextField("");
+	static final JTextField palName		= new JTextField("");
+	static final JTextField fileName	= new JTextField("");
 	// palette reading methods
 	static String[] palChoices = {
 				"Read ASCII (" + join(PALETTEEXTS,", ") +")",
 				"Binary (YY-CHR .PAL)",
 				"Extract from last block of PNG"
 				};
-	static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
-	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
+	static final JComboBox<String>	palOptions	= new JComboBox<String>(palChoices);
+	static final JFrame				frame		= new JFrame("PNGto4BPP " + VERSION);
 
 	static StringWriter debugLogging;
 	static PrintWriter debugWriter;
@@ -97,24 +98,24 @@ public class PNGto4BPP {
 		} // end metal
 
 		// window building
-		final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
-		final JFrame debugFrame = new JFrame("Debug");
-		final JFrame aboutFrame = new JFrame("About");
-		final Dimension d = new Dimension(600,382);
-		final Dimension d2 = new Dimension(600,600);
+		final JFrame	frame		= new JFrame("PNGto4BPP " + VERSION);
+		final JFrame	debugFrame	= new JFrame("Debug");
+		final JFrame	aboutFrame	= new JFrame("About");
+		final Dimension	d			= new Dimension(600,382);
+		final Dimension	d2			= new Dimension(600,600);
 
 		final TextArea debugLog = new TextArea("Debug log:",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		debugLog.setEditable(false);
 		// buttons
-		final JButton imageBtn = new JButton("Load PNG");
-		final JButton palBtn = new JButton("Load Palette");
-		final JButton fileNameBtn = new JButton("Save/Patch to...");
-		final JButton runBtn = new JButton("Convert!");
-		final JButton clrLog = new JButton("Clear");
-		final JButton expLog = new JButton("Export");
+		final JButton imageBtn		= new JButton("Load PNG");
+		final JButton palBtn		= new JButton("Load Palette");
+		final JButton fileNameBtn	= new JButton("Save/Patch to...");
+		final JButton runBtn		= new JButton("Convert!");
+		final JButton clrLog		= new JButton("Clear");
+		final JButton expLog		= new JButton("Export");
 		// Acknowledgments
-		final JMenuItem peeps = new JMenuItem("About");
-		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		final JMenuItem peeps		= new JMenuItem("About");
+		final TextArea	peepsList	= new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		peepsList.setEditable(false);
 		peepsList.append("Written by fatmanspanda"); // hey, that's me
 		peepsList.append("\n\nSpecial thanks:\nMikeTrethewey"); // forced me to do this and falls in every category
@@ -156,8 +157,8 @@ public class PNGto4BPP {
 		debugWriter = new PrintWriter(debugLogging);
 		debugLogging.write("Debug log:\n");
 		// menu 
-		final JMenuBar menu = new JMenuBar();
-		final JMenuItem debug = new JMenuItem("Debug");
+		final JMenuBar	menu	= new JMenuBar();
+		final JMenuItem debug	= new JMenuItem("Debug");
 		menu.add(debug);
 		menu.add(peeps);
 		frame.setJMenuBar(menu);
@@ -183,13 +184,13 @@ public class PNGto4BPP {
 
 		explorer.setAcceptAllFileFilterUsed(false);
 
-		final JPanel frame2 = new JPanel(new BorderLayout());
-		final JPanel imgPalWrapper = new JPanel(new BorderLayout());
-		final JPanel imgNWrapper = new JPanel(new BorderLayout());
-		final JPanel palNWrapper = new JPanel(new BorderLayout());
-		final JPanel palBtnWrapper = new JPanel(new BorderLayout());
-		final JPanel fileNWrapper = new JPanel(new BorderLayout());
-		final JPanel allWrapper = new JPanel(new BorderLayout());
+		final JPanel frame2			= new JPanel(new BorderLayout());
+		final JPanel imgPalWrapper	= new JPanel(new BorderLayout());
+		final JPanel imgNWrapper	= new JPanel(new BorderLayout());
+		final JPanel palNWrapper	= new JPanel(new BorderLayout());
+		final JPanel palBtnWrapper	= new JPanel(new BorderLayout());
+		final JPanel fileNWrapper	= new JPanel(new BorderLayout());
+		final JPanel allWrapper		= new JPanel(new BorderLayout());
 		// add image button and field
 		imgNWrapper.add(imageName,BorderLayout.CENTER);
 		imgNWrapper.add(imageBtn,BorderLayout.EAST);
@@ -359,9 +360,11 @@ public class PNGto4BPP {
 					// do nothing
 				} finally {
 					if (!testFileType(n,EXPORTEXTS)) {
+						// if invalid filetype
 						if(n.contains(".")) {
-							n = n.split(".")[0] + ".spr";
+							ChangeExtension(n,"spr");
 						} else {
+							// no filetype, append spr
 							n = n + ".spr";
 						}
 					}
@@ -396,12 +399,12 @@ public class PNGto4BPP {
 		if(args.length < 2 || args.length > 5) {
 			return false;
 		}
-		String imgSrc= "";
-		String palSrc = "";
-		String sprTarget = "";
-		String romTarget = "";
-		int palOption = -1;
-		boolean argumentErrorsFound = false;
+		String	imgSrc				= "";
+		String	palSrc				= "";
+		String	sprTarget			= "";
+		String	romTarget			= "";
+		int		palOption			= -1;
+		boolean argumentErrorsFound	= false;
 
 		for(int i = 0; i < args.length; i++) {
 			// Tokenize argument
@@ -509,8 +512,8 @@ public class PNGto4BPP {
 	public static void patchRom(byte[] spr, String romTarget) throws IOException, FileNotFoundException {
 		// Acquire ROM data
 		byte[] rom_patch;
-		FileInputStream fsInput = new FileInputStream(romTarget);
-		rom_patch = new byte[(int) fsInput.getChannel().size()];
+		FileInputStream fsInput	= new FileInputStream(romTarget);
+		rom_patch				= new byte[(int) fsInput.getChannel().size()];
 		fsInput.read(rom_patch);
 		fsInput.getChannel().position(0);
 		fsInput.close();
@@ -554,19 +557,19 @@ public class PNGto4BPP {
 		for (int i = 0; i < rando.length; i++) { // initialize rando with -1 to prevent static in the trans areas
 			rando[i] = -1;
 		}
-		BufferedImage img;
-		BufferedImage imgRead;
-		byte[] pixels;
-		String imgName = imageName.getText();
-		String paletteName = palName.getText();
-		File imageFile = new File(imgName);
-		BufferedReader br;
-		int[] palette = null;
-		byte[] palData = null;
-		byte[][][] eightbyeight;
-		int palChoice = palOptions.getSelectedIndex(); // see which palette method we're using
-		boolean extensionERR = false; // let the program spit out all extension errors at once
-		boolean patchingROM = false;
+		BufferedImage	img;
+		BufferedImage	imgRead;
+		byte[]			pixels;
+		String			imgName			= imageName.getText();
+		String			paletteName		= palName.getText();
+		File			imageFile		= new File(imgName);
+		BufferedReader	br;
+		int[]			palette			= null;
+		byte[]			palData			= null;
+		byte[][][]		eightbyeight;
+		int				palChoice		= palOptions.getSelectedIndex(); // see which palette method we're using
+		boolean			extensionERR	= false; // let the program spit out all extension errors at once
+		boolean			patchingROM		= false;
 		// test image type
 		if (!testFileType(imgName,IMAGEEXTS)) {
 			JOptionPane.showMessageDialog(frame,
@@ -596,8 +599,8 @@ public class PNGto4BPP {
 
 		// save location
 		String loc = fileName.getText();
-		boolean bamboozled = false;
-		boolean[] bamboozarino = new boolean[16];
+		boolean		bamboozled		= false;
+		boolean[]	bamboozarino	= new boolean[16];
 		if (loc.toLowerCase().matches("bamboozle:\\s*[0-9a-f]+")) {
 			bamboozled = true;
 			loc = loc.replace("bamboozle:","");
@@ -904,8 +907,8 @@ public class PNGto4BPP {
 	}
 
 	public static byte[] readFile(String path) throws IOException {
-		File file = new File(path);
-		byte[] ret = new byte[(int) file.length()];
+		File	file	= new File(path);
+		byte[]	ret		= new byte[(int) file.length()];
 		FileInputStream s;
 		try {
 			s = new FileInputStream(file);
@@ -1169,11 +1172,11 @@ public class PNGto4BPP {
 	 * @return <b>byte[][][]</b> representing the image as a grid of color indices
 	 */
 	public static byte[][][] get8x8(byte[] pixels, int[] pal) {
-		int dis = pixels.length/4;
-		int largeCol = 0;
-		int intRow = 0;
-		int intCol = 0;
-		int index = 0;
+		int dis			= pixels.length/4;
+		int largeCol	= 0;
+		int intRow		= 0;
+		int intCol		= 0;
+		int index		= 0;
 
 		// all 8x8 squares, read left to right, top to bottom
 		byte[][][] eightbyeight = new byte[896][8][8];
@@ -1261,9 +1264,9 @@ public class PNGto4BPP {
 			for (int j = 0; j < fourbpp[0].length; j++) {
 				for (int k = 0; k < 8; k++) {
 					// get row r's bth bit plane, based on index j of bppi
-					int row = bppi[j][0];
-					int plane = bppi[j][1];
-					int byteX = eightbyeight[i][row][k];
+					int row		= bppi[j][0];
+					int plane	= bppi[j][1];
+					int byteX	= eightbyeight[i][row][k];
 					// AND the bits with 1000, 0100, 0010, 0001 to get bit in that location
 					boolean bitB = ( byteX & (1 << plane) ) > 0;
 					fourbpp[i][j][k] = bitB;
