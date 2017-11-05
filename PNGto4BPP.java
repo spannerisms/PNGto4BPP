@@ -39,7 +39,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
-
+import SpriteManipulator.SpriteManipulator;
 // class
 public class PNGto4BPP {
 	// version number
@@ -322,6 +322,7 @@ public class PNGto4BPP {
 						"YAY",
 						JOptionPane.PLAIN_MESSAGE);
 			}});
+
 		// image button
 		imageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -535,30 +536,7 @@ public class PNGto4BPP {
 		FileInputStream fsInput = new FileInputStream(sprTarget);
 		fsInput.read(sprite_data);
 		fsInput.close();
-		patchRom(sprite_data, romTarget);
-	}
-
-	public static void patchRom(byte[] spr, String romTarget) throws IOException, FileNotFoundException {
-		// Acquire ROM data
-		byte[] rom_patch;
-		FileInputStream fsInput = new FileInputStream(romTarget);
-		rom_patch = new byte[(int) fsInput.getChannel().size()];
-		fsInput.read(rom_patch);
-		fsInput.getChannel().position(0);
-		fsInput.close();
-
-		// filestream save .spr file to ROM
-		FileOutputStream fsOut = new FileOutputStream(romTarget);
-
-		for(int i = 0;i<0x7000;i++) {
-			rom_patch[0x80000 + i] = spr[i];
-		}
-		for (int i = 0; i < 0x78; i++) {
-			rom_patch[0x0DD308 + i] = spr[i+0x7000];
-		}
-		fsOut.write(rom_patch, 0, rom_patch.length);
-
-		fsOut.close();
+		SpriteManipulator.patchRom(sprite_data, romTarget);
 	}
 
 	public static boolean IsInteger(String string) {
@@ -706,7 +684,7 @@ public class PNGto4BPP {
 		}
 
 		// convert to RGB colorspace
-		img = convertToABGR(imgRead);
+		img = SpriteManipulator.convertToABGR(imgRead);
 
 		// image raster
 		try {
@@ -746,7 +724,7 @@ public class PNGto4BPP {
 					palette = getPaletteColorsFromFile(br);
 				}
 				palette = roundPalette(palette);
-				palData = palDataFromArray(palette);
+				palData = SpriteManipulator.getPalDataFromArray(palette);
 			} catch (NumberFormatException|IOException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Error reading palette",
@@ -776,7 +754,7 @@ public class PNGto4BPP {
 			try {
 				byte[] palX = readFile(paletteName);
 				palette = palFromBinary(palX);
-				palData = palDataFromArray(palette);
+				palData = SpriteManipulator.getPalDataFromArray(palette);
 			} catch(Exception e) {
 				return false;
 			}
@@ -785,7 +763,7 @@ public class PNGto4BPP {
 		// extract from last block
 		if (palChoice == 2) {
 			palette = palExtract(pixels);
-			palData = palDataFromArray(palette);
+			palData = SpriteManipulator.getPalDataFromArray(palette);
 		}
 
 		// make the file
@@ -810,7 +788,7 @@ public class PNGto4BPP {
 		// write data to SPR file
 		try {
 			if (patchingROM) {
-				patchRom(SNESdata, loc);
+				SpriteManipulator.patchRom(SNESdata, loc);
 			}
 			else {
 				writeSPR(SNESdata, loc);
@@ -892,20 +870,6 @@ public class PNGto4BPP {
 				ret += c;
 			}
 		}
-		return ret;
-	}
-
-	/**
-	 * Converts to ABGR colorspace
-	 * @param img - image to convert
-	 * @return New <tt>BufferredImage</tt> in the correct colorspace
-	 */
-
-	public static BufferedImage convertToABGR(BufferedImage img) {
-		BufferedImage ret = null;
-		ret = new BufferedImage(img.getWidth(),img.getHeight(),BufferedImage.TYPE_4BYTE_ABGR);
-		ColorConvertOp rgb = new ColorConvertOp(null);
-		rgb.filter(img,ret);
 		return ret;
 	}
 
@@ -1151,30 +1115,6 @@ public class PNGto4BPP {
 		}
 
 		return palret;
-	}
-
-	/**
-	 * Create binary palette data for appending to the end of the <tt>.spr</tt> file.
-	 * @param pal - <b>int[]</b> contained the palette colors as RRRGGGBBB
-	 * @return <b>byte[]<b> containing palette data in 5:5:5 format
-	 */
-	public static byte[] palDataFromArray(int[] pal) {
-		// create palette data as 5:5:5
-		ByteBuffer palRet = ByteBuffer.allocate(0x78);
-
-		for (int i = 1; i < 16; i++) {
-			for (int t = 0; t < 4; t++) {
-				int r = pal[i+16*t] / 1000000;
-				int g = (pal[i+16*t] % 1000000) / 1000;
-				int b = pal[i+16*t] % 1000;
-				short s = (short) ((( b / 8) << 10) | ((( g / 8) << 5) | ((( r / 8) << 0))));
-				// put color into every mail palette
-				palRet.putShort(30*t+((i-1)*2),Short.reverseBytes(s));
-			}
-		}
-
-		// end palette
-		return palRet.array();
 	}
 
 	public static int[] palFromBinary(byte[] pal) {
