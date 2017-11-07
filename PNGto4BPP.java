@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -40,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
 import SpriteManipulator.SpriteManipulator;
+import SpriteMe.SpriteMe;
 // class
 public class PNGto4BPP {
 	// version number
@@ -168,7 +170,6 @@ public class PNGto4BPP {
 		frameWrap.add(fullWrap);
 
 		// Acknowledgments
-		final JMenuItem peeps = new JMenuItem("About");
 		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		peepsList.setEditable(false);
 		peepsList.append("Written by fatmanspanda"); // hey, that's me
@@ -212,12 +213,46 @@ public class PNGto4BPP {
 		debugLogging = new StringWriter();
 		debugWriter = new PrintWriter(debugLogging);
 		debugLogging.write("Debug log:\n");
+
 		// menu
 		final JMenuBar menu = new JMenuBar();
+		final JMenu fileMenu = new JMenu("File");
 		final JMenuItem debug = new JMenuItem("Debug");
-		menu.add(debug);
-		menu.add(peeps);
+		ImageIcon bee = new ImageIcon(
+				SpriteMe.class.getResource("/PNGto4BPP/Bee.png")
+			);
+		debug.setIcon(bee);
+		fileMenu.add(debug);
+		fileMenu.add(debug);
+
+		// exit
+		final JMenuItem exit = new JMenuItem("Exit");
+		ImageIcon mirror = new ImageIcon(
+				SpriteMe.class.getResource("/PNGto4BPP/Mirror.png")
+			);
+		exit.setIcon(mirror);
+		fileMenu.add(exit);
+		exit.addActionListener(arg0 -> System.exit(0));
+
+		menu.add(fileMenu);
+		// end file menu
+
+		// help menu
+		final JMenu helpMenu = new JMenu("Help");
+		
+		// Acknowledgements
+		final JMenuItem peeps = new JMenuItem("About");
+		ImageIcon mapIcon = new ImageIcon(
+				SpriteMe.class.getResource("/PNGto4BPP/Map.png")
+			);
+		peeps.setIcon(mapIcon);
+		helpMenu.add(peeps);
+
+		menu.add(helpMenu);
+		// end help menu
+
 		frame.setJMenuBar(menu);
+
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
 
@@ -265,12 +300,14 @@ public class PNGto4BPP {
 			public void actionPerformed(ActionEvent arg0) {
 				aboutFrame.setVisible(true);
 			}});
+
 		// debug
 		debug.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				debugLog.setText(debugLogging.toString());
 				debugFrame.setVisible(true);
 			}});
+
 		// debug clear
 		clrLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
