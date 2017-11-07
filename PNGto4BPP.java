@@ -7,11 +7,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.TextArea;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -594,20 +592,16 @@ public class PNGto4BPP {
 	}
 
 	public static boolean ConvertPngToSprite(boolean ignoreSuccessMessage) {
-		byte[] rando = new byte[16];
-		for (int i = 0; i < rando.length; i++) { // initialize rando with -1 to prevent static in the trans areas
-			rando[i] = -1;
-		}
 		BufferedImage img;
 		BufferedImage imgRead;
-		byte[]			pixels;
+		byte[] pixels;
 		String imgName = imageName.getText();
 		String paletteName = palName.getText();
 		File imageFile = new File(imgName);
 		BufferedReader br;
-		int[]			palette = null;
-		byte[]			palData = null;
-		byte[][][]		eightbyeight;
+		int[] palette = null;
+		byte[] palData = null;
+		byte[][][] eightbyeight;
 		int palChoice = palOptions.getSelectedIndex(); // see which palette method we're using
 		boolean extensionERR = false; // let the program spit out all extension errors at once
 		boolean patchingROM = false;
@@ -640,26 +634,6 @@ public class PNGto4BPP {
 
 		// save location
 		String loc = fileName.getText();
-		boolean bamboozled = false;
-		boolean[]	bamboozarino = new boolean[16];
-		if (loc.toLowerCase().matches("bamboozle:\\s*[0-9a-f]+")) {
-			bamboozled = true;
-			loc = loc.replace("bamboozle:","");
-			String HEX = "0123456789ABCDEF";
-			for (int i = 0; i < HEX.length(); i++) {
-				char a = HEX.charAt(i);
-				if (loc.indexOf(a) != -1) {
-					bamboozarino[i] = true;
-				}
-			}
-
-			for (int i = 0; i < bamboozarino.length; i++) {
-				if (bamboozarino[i]) {
-					rando[i] = (byte) i;
-				}
-			}
-			loc = "";
-		}
 
 		// default name
 		if (loc.equals("")) {
@@ -670,7 +644,7 @@ public class PNGto4BPP {
 				loc = "oops";
 			} finally {
 				// still add extension here so that the user isn't fooled into thinking they need this field
-				loc += " (" + (bamboozled ? "bamboozled" : "exported") + ").spr";
+				loc += " (exported).spr";
 			}
 		}
 
@@ -733,7 +707,7 @@ public class PNGto4BPP {
 		}
 
 		// round image raster
-		pixels = roundRaster(pixels);
+		pixels = SpriteManipulator.roundRaster(pixels);
 
 		// explicit ASCII palette
 		if (palChoice == 0) {
@@ -757,7 +731,7 @@ public class PNGto4BPP {
 				else {
 					palette = getPaletteColorsFromFile(br);
 				}
-				palette = roundPalette(palette);
+				palette = SpriteManipulator.roundPalette(palette);
 				palData = SpriteManipulator.getPalDataFromArray(palette);
 			} catch (NumberFormatException|IOException e) {
 				JOptionPane.showMessageDialog(frame,
@@ -786,7 +760,7 @@ public class PNGto4BPP {
 				return false;
 			}
 			try {
-				byte[] palX = readFile(paletteName);
+				byte[] palX = SpriteManipulator.readFile(paletteName);
 				palette = palFromBinary(palX);
 				palData = SpriteManipulator.getPalDataFromArray(palette);
 			} catch(Exception e) {
@@ -815,9 +789,9 @@ public class PNGto4BPP {
 		}
 
 		// split bytes into blocks
-		eightbyeight = get8x8(pixels, palette);
+		eightbyeight = SpriteManipulator.indexAnd8x8(pixels, palette);
 
-		byte[] SNESdata = exportPNG(eightbyeight, palData, rando);
+		byte[] SNESdata = SpriteManipulator.exportToSPR(eightbyeight, palData);
 
 		// write data to SPR file
 		try {
@@ -825,7 +799,7 @@ public class PNGto4BPP {
 				SpriteManipulator.patchRom(SNESdata, loc);
 			}
 			else {
-				writeSPR(SNESdata, loc);
+				SpriteManipulator.writeSPR(SNESdata, loc);
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame,
@@ -918,8 +892,7 @@ public class PNGto4BPP {
 		if (w != 128 || h != 448) {
 			throw controller.new BadDimensionsException("Invalid dimensions of {" + w + "," + h + "}");
 		}
-		byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-		return pixels;
+		return SpriteManipulator.getImageRaster(img);
 	}
 
 	/**
@@ -933,24 +906,6 @@ public class PNGto4BPP {
 		return ret;
 	}
 
-	public static byte[] readFile(String path) throws IOException {
-		File file = new File(path);
-		byte[]	ret = new byte[(int) file.length()];
-		FileInputStream s;
-		try {
-			s = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			throw e;
-		}
-		try {
-			s.read(ret);
-			s.close();
-		} catch (IOException e) {
-			throw e;
-		}
-
-		return ret;
-	}
 	/**
 	 * Reads a GIMP (<tt>.gpl</tt>) or Graphics Gale (<tt>.pal</tt>) palette file for colors.
 	 * <br><br>
@@ -1082,38 +1037,6 @@ public class PNGto4BPP {
 	}
 
 	/**
-	 * Rounds every byte in an image to the nearest 8.
-	 * @param raster - image raster to round
-	 */
-	public static byte[] roundRaster(byte[] raster) {
-		byte[] ret = new byte[raster.length];
-		for (int i = 0; i < raster.length; i++) {
-			int v = (raster[i]+256) % 256;
-			v = (v / 8) * 8;
-			ret[i] = (byte) v;
-		}
-		return ret;
-	}
-
-	/**
-	 * Takes every color in a palette and rounds each byte to the nearest 8.
-	 * @param pal - palette to round
-	 */
-	public static int[] roundPalette(int[] pal) {
-		int[] ret = new int[pal.length];
-		for (int i = 0; i < pal.length; i++) {
-			int color = pal[i];
-			int r = color / 1000000;
-			int g = (color % 1000000) / 1000;
-			int b = color % 1000;
-			r = (r / 8) * 8;
-			g = (g / 8) * 8;
-			b = (b / 8) * 8;
-			ret[i] = (r * 1000000) + (g * 1000) + b;
-		}
-		return ret;
-	}
-	/**
 	 * Extracts palette colors from last 8x8 block of the image.
 	 * Each row of this 8x8 block represents one-half of a mail palette.
 	 * Row 1 contains green mail's colors 0x0&ndash;0x7;
@@ -1155,178 +1078,11 @@ public class PNGto4BPP {
 		int[] ret = new int[64];
 		for (int i = 0; i < 64; i++) {
 			int pos = (i * 3);
-			int r = unsignByte(pal[pos]);
-			int g = unsignByte(pal[pos+1]);
-			int b = unsignByte(pal[pos+2]);
+			int r = Byte.toUnsignedInt(pal[pos]);
+			int g = Byte.toUnsignedInt(pal[pos+1]);
+			int b = Byte.toUnsignedInt(pal[pos+2]);
 			ret[i] = (r * 1000000) + (g * 1000) + b;
 		}
-		return ret;
-	}
-	/**
-	 * Turn the image into an array of 8x8 blocks.
-	 * Assumes ABGR color space.
-	 * <br><br>
-	 * If a color matches an index that belongs to one of the latter 3 mails
-	 * but does not match anything in green mail
-	 * then it is treated as the color at the corresponding index of green mail.
-	 *
-	 * @param pixels - aray of color indices
-	 * @param pal - palette colors
-	 * @return <b>byte[][][]</b> representing the image as a grid of color indices
-	 */
-	public static byte[][][] get8x8(byte[] pixels, int[] pal) {
-		int dis = pixels.length/4;
-		int largeCol = 0;
-		int intRow = 0;
-		int intCol = 0;
-		int index = 0;
-
-		// all 8x8 squares, read left to right, top to bottom
-		byte[][][] eightbyeight = new byte[896][8][8];
-
-		// read image
-		for (int i = 0; i < dis; i++) {
-			// get each color and get rid of sign
-			// colors are stored as {A,B,G,R,A,B,G,R...}
-			int b = unsignByte(pixels[i*4+1]);
-			int g = unsignByte(pixels[i*4+2]);
-			int r = unsignByte(pixels[i*4+3]);
-
-			// convert to 9 digits
-			int rgb = (1000000 * r) + (1000 * g) + b;
-
-			// find palette index of current pixel
-			for (int s = 0; s < pal.length; s++) {
-				if (pal[s] == rgb) {
-					eightbyeight[index][intRow][intCol] = (byte) (s % 16); // mod 16 in case it reads another mail
-					break;
-				}
-			}
-
-			// count up square by square
-			// at 8, reset the "Interior column" which we use to locate the pixel in 8x8
-			// increments the "Large column", which is the index of the 8x8 sprite on the sheet
-			// at 16, reset the index and move to the next row
-			// (so we can wrap around back to our old 8x8)
-			// after 8 rows, undo the index reset, and move on to the next super row
-			intCol++;
-			if (intCol == 8) {
-				index++;
-				largeCol++;
-				intCol = 0;
-				if (largeCol == 16) {
-					index -= 16;
-					largeCol = 0;
-					intRow++;
-					if (intRow == 8) {
-						index += 16;
-						intRow = 0;
-					}
-				}
-			}
-		}
-		return eightbyeight;
-	}
-
-	/**
-	 * Converts an index map into a proper 4BPP (SNES) byte map.
-	 * @param eightbyeight - color index map
-	 * @param pal - palette
-	 * @param rando - palette indices to randomize
-	 * @return new byte array in SNES4BPP format
-	 */
-	public static byte[] exportPNG(byte[][][] eightbyeight, byte[] palData, byte[] rando) {
-		// why is this here
-		// randomize desired indices
-		for (int i = 0; i < eightbyeight.length; i++) {
-			for (int j = 0; j < eightbyeight[0].length; j++) {
-				for (int k = 0; k < eightbyeight[0][0].length; k++) {
-					for (byte a : rando) {
-						if (eightbyeight[i][j][k] == a) {
-							eightbyeight[i][j][k] = (byte) (Math.random() * 16);
-						}
-					}
-				}
-			}
-		}
-
-		// format of SNES 4bpp {row (r), bit plane (b)}
-		// bit plane 0 indexed such that 1011 corresponds to 0123
-		int bppi[][] = {
-				{0,0},{0,1},{1,0},{1,1},{2,0},{2,1},{3,0},{3,1},
-				{4,0},{4,1},{5,0},{5,1},{6,0},{6,1},{7,0},{7,1},
-				{0,2},{0,3},{1,2},{1,3},{2,2},{2,3},{3,2},{3,3},
-				{4,2},{4,3},{5,2},{5,3},{6,2},{6,3},{7,2},{7,3}
-		};
-
-		// bit map
-		boolean[][][] fourbpp = new boolean[896][32][8];
-
-		for (int i = 0; i < fourbpp.length; i++) {
-			// each byte, as per bppi
-			for (int j = 0; j < fourbpp[0].length; j++) {
-				for (int k = 0; k < 8; k++) {
-					// get row r's bth bit plane, based on index j of bppi
-					int row = bppi[j][0];
-					int plane = bppi[j][1];
-					int byteX = eightbyeight[i][row][k];
-					// AND the bits with 1000, 0100, 0010, 0001 to get bit in that location
-					boolean bitB = ( byteX & (1 << plane) ) > 0;
-					fourbpp[i][j][k] = bitB;
-				}
-			}
-		}
-
-		// byte map
-		// includes the size of the sheet (896*32) + palette data (0x78)
-		byte[] bytemap = new byte[896*32+0x78];
-
-		int k = 0;
-		for (int i = 0; i < fourbpp.length; i++) {
-			for (int j = 0; j < fourbpp[0].length; j++) {
-				byte next = 0;
-				// turn true false into byte
-				for (boolean a : fourbpp[i][j]) {
-					next <<= 1;
-					next |= (a ? 1 : 0);
-				}
-				bytemap[k] = next;
-				k++;
-			}
-		}
-		// end 4BPP
-
-		// add palette data, starting at end of sheet
-		int i = 896*32;
-		for (byte b : palData) {
-			if (i == bytemap.length) {
-				break;
-			}
-			bytemap[i] = b;
-			i++;
-		}
-		return bytemap;
-	}
-
-	/**
-	 * Writes the image to an <tt>.spr</tt> file.
-	 * @param map - SNES 4BPP file, including 5:5:5
-	 * @param loc - File path of exported sprite
-	 */
-	public static void writeSPR(byte[] map, String loc) throws IOException {
-		// create a file at directory
-		new File(loc);
-
-		FileOutputStream fileOuputStream = new FileOutputStream(loc);
-		try {
-			fileOuputStream.write(map);
-		} finally {
-			fileOuputStream.close();
-		}
-	}
-
-	public static int unsignByte(byte b) {
-		int ret = ((b + 256) % 256);
 		return ret;
 	}
 
