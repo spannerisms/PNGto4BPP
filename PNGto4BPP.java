@@ -834,12 +834,12 @@ public class PNGto4BPP {
 
 	/**
 	 * Test a file against multiple extensions.
-	 * The way <b>getFileType</b> works should allow
+	 * The way {@code getFileType} works should allow
 	 * both full paths and lone file types to work.
 	 *
 	 * @param s - file name or extension
 	 * @param type - list of all extensions to test against
-	 * @return <tt>true</tt> if any extension is matched
+	 * @return {@code true} if any extension is matched
 	 */
 	public static boolean testFileType(String s, String[] type) {
 		boolean ret = false;
@@ -858,7 +858,7 @@ public class PNGto4BPP {
 	 *
 	 * @param s - file name or extension
 	 * @param type - extension
-	 * @return <tt>true</tt> if extension is matched
+	 * @return {@code true} if extension is matched
 	 */
 	public static boolean testFileType(String s, String type) {
 		return testFileType(s, new String[] { type });
@@ -868,7 +868,7 @@ public class PNGto4BPP {
 	 * Join array of strings together with a delimiter.
 	 * @param s - array of strings
 	 * @param c - delimiter
-	 * @return A single <tt>String</tt>.
+	 * @return A single {@code String}.
 	 */
 	public static String join(String[] s, String c) {
 		String ret = "";
@@ -907,7 +907,7 @@ public class PNGto4BPP {
 	}
 
 	/**
-	 * Reads a GIMP (<tt>.gpl</tt>) or Graphics Gale (<tt>.pal</tt>) palette file for colors.
+	 * Reads a GIMP ({@code .gpl}) or Graphics Gale ({@code .pal}) palette file for colors.
 	 * <br><br>
 	 * This function first finds as many colors as it can from the palette.
 	 * Once the palette is fully read, the number of colors recognized is
@@ -917,7 +917,7 @@ public class PNGto4BPP {
 	 * If fewer than 4 palettes are found, any empty palette is copied from green mail.
 	 *
 	 * @param pal - Palette to read
-	 * @return <b>int[]</b> of 64 colors as integers (RRRGGGBBB)
+	 * @return {@code int[]} of 64 colors as integers (RRRGGGBBB)
 	 * @throws ShortPaletteException Halts the process if enough colors are not found.
 	 */
 	public static int[] getPaletteColorsFromFile(BufferedReader pal)
@@ -980,7 +980,7 @@ public class PNGto4BPP {
 	}
 
 	/**
-	 * Reads a Paint.NET palette (<tt>.txt</tt>) for colors.
+	 * Reads a Paint.NET palette ({@code .txt}) for colors.
 	 * This method must be separate as Paint.NET uses HEX values to write colors.
 	 * <br><br>
 	 * This function firsts find as many colors as it can from the palette.
@@ -991,7 +991,7 @@ public class PNGto4BPP {
 	 * If fewer than 4 palettes are found, any empty palette is copied from green mail.
 	 *
 	 * @param pal - Palette to read
-	 * @return <b>int[]</b> of 64 colors as integers (RRRGGGBBB) of 64 colors as integers (RRRGGGBBB)
+	 * @return {@code int[]} of 64 colors as integers (RRRGGGBBB) of 64 colors as integers (RRRGGGBBB)
 	 * @throws ShortPaletteException Halts the process if enough colors are not found.
 	 */
 	public static int[] getPaletteColorsFromPaintNET(BufferedReader pal)
