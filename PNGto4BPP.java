@@ -59,6 +59,7 @@ public class PNGto4BPP {
 	static final JTextField imageName = new JTextField("");
 	static final JTextField palName = new JTextField("");
 	static final JTextField fileName = new JTextField("");
+
 	// palette reading methods
 	static String[] palChoices = {
 				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
@@ -72,11 +73,11 @@ public class PNGto4BPP {
 	static PrintWriter debugWriter;
 
 	// Summary
-	// Command Line Usage:
-	// imgSrc: Full Path for Image
+	// Command line usage:
+	// imgSrc: Full path for image
 	// palMethod: palFileMethod [0:ASCII(.GPL|.PAL|.TXT), 1:Binary(YY-CHR .PAL), 2:Extract from Last Block of PNG]
 	// palSrc:(Used if Method 0 or 1 selected): Full Path for Palette File.
-	// sprTarget(optional): Name of Sprite that will be created. Will default to name of imgSrc with new extension.
+	// sprTarget(optional): Name of sprite that will be created. Will default to name of imgSrc with new extension.
 	// romTarget(optional): Path of ROM to patch.
 
 	// main and stuff
@@ -128,7 +129,7 @@ public class PNGto4BPP {
 		fullWrap.add(imageBtn, w);
 
 		// palette
-		final JButton palBtn = new JButton("Load Palette");
+		final JButton palBtn = new JButton("Load palette");
 		w.gridy++;
 		w.gridx = 0;
 		w.gridwidth = 1;
@@ -429,7 +430,7 @@ public class PNGto4BPP {
 					if (!SpriteManipulator.testFileType(n,EXPORTEXTS)) {
 						// if invalid filetype
 						if(n.contains(".")) {
-							ChangeExtension(n,"spr");
+							changeExtension(n,"spr");
 						} else {
 							// no filetype, append spr
 							n = n + ".spr";
@@ -442,7 +443,7 @@ public class PNGto4BPP {
 		// run button
 		runBtn.addActionListener(
 			arg0 -> {
-				ConvertPngToSprite(false);
+				convertPngToSprite(false);
 			});
 
 		//If arguments are greater than 1, then we have the necessary arguments to do command line processing.
@@ -542,14 +543,14 @@ public class PNGto4BPP {
 
 		// If sprite target name is not set, use the img source name with .spr extension.
 		if(sprTarget == "") {
-			sprTarget = ChangeExtension(imgSrc, "spr");
+			sprTarget = changeExtension(imgSrc, "spr");
 			fileName.setText(sprTarget);
 		}
 
 		// If all arguments check out, lets finish everything we want to do.
 		if(!argumentErrorsFound) {
 			// Returns true if successful
-			if(ConvertPngToSprite(true)) {
+			if(convertPngToSprite(true)) {
 
 				if(romTarget != "") {
 					try {
@@ -585,7 +586,7 @@ public class PNGto4BPP {
 		}
 	}
 
-	public static String ChangeExtension(String file, String extension) {
+	public static String changeExtension(String file, String extension) {
 		String filename = file;
 
 		if (filename.contains(".")) {
@@ -596,7 +597,7 @@ public class PNGto4BPP {
 		return filename;
 	}
 
-	public static boolean ConvertPngToSprite(boolean ignoreSuccessMessage) {
+	public static boolean convertPngToSprite(boolean ignoreSuccessMessage) {
 		BufferedImage img;
 		BufferedImage imgRead;
 		byte[] pixels;
@@ -608,8 +609,10 @@ public class PNGto4BPP {
 		byte[] palData = null;
 		byte[][][] eightbyeight;
 		int palChoice = palOptions.getSelectedIndex(); // see which palette method we're using
+
 		boolean extensionERR = false; // let the program spit out all extension errors at once
 		boolean patchingROM = false;
+
 		// test image type
 		if (!SpriteManipulator.testFileType(imgName, IMAGEEXTS)) {
 			JOptionPane.showMessageDialog(frame,
