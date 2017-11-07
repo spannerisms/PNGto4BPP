@@ -61,7 +61,7 @@ public class PNGto4BPP {
 	static final JTextField fileName = new JTextField("");
 	// palette reading methods
 	static String[] palChoices = {
-				"Read ASCII (" + join(PALETTEEXTS,", ") +")",
+				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
 				"Binary (YY-CHR .PAL)",
 				"Extract from last block of PNG"
 				};
@@ -170,32 +170,36 @@ public class PNGto4BPP {
 		peepsList.append("Written by fatmanspanda"); // hey, that's me
 		peepsList.append("\n\nSpecial thanks:\nMikeTrethewey"); // forced me to do this and falls in every category
 		peepsList.append("\n\nCode contribution:\n");
-		peepsList.append(join(new String[]{
-				"Zarby89", // a lot of conversion help
-				"Glan", // various optimizations and bitwise help
-				"CGG Zayik" // command line functions
-				}, ", "));
+		peepsList.append(String.join(", ",
+				new String[] {
+						"Zarby89", // a lot of conversion help
+						"Glan", // various optimizations and bitwise help
+						"CGG Zayik" // command line functions
+				}));
 		peepsList.append("\n\nTesting and feedback:\n");
-		peepsList.append(join(new String[]{
-				"CGG Zayik", // test sprite contributor
-				"RyuTech", // test sprite contributor
-				"Damon" // test sprite contributor
-				}, ", "));
+		peepsList.append(String.join(", ",
+				new String[] {
+						"CGG Zayik", // test sprite contributor
+						"RyuTech", // test sprite contributor
+						"Damon" // test sprite contributor
+				}));
 		peepsList.append("\n\nResources and development:\n");
-		peepsList.append(join(new String[]{
-				"Veetorp", // provided most valuable documentation
-				"Zarby89", // various documentation and answers
-				"Damon", // Paint.NET palettes
-				"Sosuke3" // various snes code answers
-				}, ", "));
+		peepsList.append(String.join(", ",
+				new String[] {
+						"Veetorp", // provided most valuable documentation
+						"Zarby89", // various documentation and answers
+						"Damon", // Paint.NET palettes
+						"Sosuke3" // various snes code answers
+				}));
 		peepsList.append("\n\nIcon by:\n");
-		peepsList.append(join(new String[]{
-				"Hoodyha"
-				}, ", "));
+		peepsList.append(String.join(", ",
+				new String[] {
+						"Hoodyha"
+				}));
 		peepsList.append("\n\nUpdates at:\n");
-		peepsList.append(join(new String[]{
-				"http://github.com/fatmanspanda/ALttPNG/wiki"
-				}, ", "));
+		peepsList.append(String.join(", ", new String[] {
+						"http://github.com/fatmanspanda/ALttPNG/wiki"
+						}));
 		aboutFrame.add(peepsList);
 
 		// debug text
@@ -256,7 +260,7 @@ public class PNGto4BPP {
 		FileNameExtensionFilter imgFilter =
 				new FileNameExtensionFilter("PNG files", IMAGEEXTS);
 		FileNameExtensionFilter palFilter =
-				new FileNameExtensionFilter("Palette files (" +join(PALETTEEXTS,", ") +")",
+				new FileNameExtensionFilter("Palette files (" +String.join(", ",PALETTEEXTS) +")",
 						PALETTEEXTS);
 		FileNameExtensionFilter binPalFilter =
 				new FileNameExtensionFilter("YY-CHR palettes", BINARYEXTS);
@@ -327,9 +331,10 @@ public class PNGto4BPP {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (!testFileType(n,LOGEXTS)) {
+					if (!SpriteManipulator.testFileType(n,LOGEXTS)) {
 						JOptionPane.showMessageDialog(frame,
-								"Debug logs must be of the following extensions:\n" + join(LOGEXTS,", "),
+								"Debug logs must be of the following extensions:\n" +
+										String.join(", ",LOGEXTS),
 								"Oops",
 								JOptionPane.WARNING_MESSAGE);
 						return;
@@ -371,7 +376,7 @@ public class PNGto4BPP {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (testFileType(n,IMAGEEXTS)) {
+					if (SpriteManipulator.testFileType(n,IMAGEEXTS)) {
 						imageName.setText(n);
 					}
 				}
@@ -398,7 +403,7 @@ public class PNGto4BPP {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (testFileType(n,PALETTEEXTS)) {
+					if (SpriteManipulator.testFileType(n,PALETTEEXTS)) {
 						palName.setText(n);
 					}
 				}
@@ -421,7 +426,7 @@ public class PNGto4BPP {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (!testFileType(n,EXPORTEXTS)) {
+					if (!SpriteManipulator.testFileType(n,EXPORTEXTS)) {
 						// if invalid filetype
 						if(n.contains(".")) {
 							ChangeExtension(n,"spr");
@@ -606,16 +611,17 @@ public class PNGto4BPP {
 		boolean extensionERR = false; // let the program spit out all extension errors at once
 		boolean patchingROM = false;
 		// test image type
-		if (!testFileType(imgName,IMAGEEXTS)) {
+		if (!SpriteManipulator.testFileType(imgName, IMAGEEXTS)) {
 			JOptionPane.showMessageDialog(frame,
-					"Images must be of the following extensions:\n" + join(IMAGEEXTS,", "),
+					"Images must be of the following extensions:\n" +
+							String.join(", ", IMAGEEXTS),
 					"Oops",
 					JOptionPane.WARNING_MESSAGE);
 			extensionERR = true;
 		}
 
 		// test palette type
-		if (!testFileType(paletteName,PALETTEEXTS) && (palChoice != 2)) {
+		if (!SpriteManipulator.testFileType(paletteName, PALETTEEXTS) && (palChoice != 2)) {
 			if(paletteName.length() == 0) {
 				JOptionPane.showMessageDialog(frame,
 						"No Palette source was specified despite using a palette method that requires it",
@@ -625,7 +631,8 @@ public class PNGto4BPP {
 			}
 			else {
 				JOptionPane.showMessageDialog(frame,
-						"Palettes must be of the following extensions:\n" + join(PALETTEEXTS,", "),
+						"Palettes must be of the following extensions:\n" +
+								String.join(", ", PALETTEEXTS),
 						"Oops",
 						JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
@@ -649,16 +656,16 @@ public class PNGto4BPP {
 		}
 
 		// sfc means we're patching a ROM
-		if (testFileType(loc,"sfc")) {
+		if (SpriteManipulator.testFileType(loc,"sfc")) {
 			patchingROM = true;
 		}
 
 		// only allow sprite/ROM files
-		if (!testFileType(loc,EXPORTEXTS)) {
+		if (!SpriteManipulator.testFileType(loc, EXPORTEXTS)) {
 			if(loc.contains(".")) {
 				JOptionPane.showMessageDialog(frame,
 						"Export location must be of the following extensions:\n" +
-								join(EXPORTEXTS,", "),
+								String.join(", ", EXPORTEXTS),
 								"Oops",
 								JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
@@ -725,7 +732,7 @@ public class PNGto4BPP {
 			// palette parsing
 			try {
 				// test file type to determine format
-				if (testFileType(paletteName, "txt")) {
+				if (SpriteManipulator.testFileType(paletteName, "txt")) {
 					palette = getPaletteColorsFromPaintNET(br);
 				}
 				else {
@@ -752,7 +759,7 @@ public class PNGto4BPP {
 
 		// binary (YY-CHR) pal
 		if (palChoice == 1) {
-			if (!testFileType(paletteName, "pal")) {
+			if (!SpriteManipulator.testFileType(paletteName, "pal")) {
 				JOptionPane.showMessageDialog(frame,
 						"Binary palette reading must by a .PAL file",
 						"Oops",
@@ -820,65 +827,6 @@ public class PNGto4BPP {
 				JOptionPane.PLAIN_MESSAGE);
 		}
 		return true;
-	}
-
-	/**
-	 * gives file extension name from a string
-	 * @param s - test case
-	 * @return extension type
-	 */
-	public static String getFileType(String s) {
-		String ret = s.substring(s.lastIndexOf(".") + 1);
-		return ret;
-	}
-
-	/**
-	 * Test a file against multiple extensions.
-	 * The way {@code getFileType} works should allow
-	 * both full paths and lone file types to work.
-	 *
-	 * @param s - file name or extension
-	 * @param type - list of all extensions to test against
-	 * @return {@code true} if any extension is matched
-	 */
-	public static boolean testFileType(String s, String[] type) {
-		boolean ret = false;
-		String filesType = getFileType(s);
-		for (String t : type) {
-			if (filesType.equalsIgnoreCase(t)) {
-				ret = true;
-				break;
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * Test a file against a single extension.
-	 *
-	 * @param s - file name or extension
-	 * @param type - extension
-	 * @return {@code true} if extension is matched
-	 */
-	public static boolean testFileType(String s, String type) {
-		return testFileType(s, new String[] { type });
-	}
-
-	/**
-	 * Join array of strings together with a delimiter.
-	 * @param s - array of strings
-	 * @param c - delimiter
-	 * @return A single {@code String}.
-	 */
-	public static String join(String[] s, String c) {
-		String ret = "";
-		for (int i = 0; i < s.length; i++) {
-			ret += s[i];
-			if (i != s.length-1) {
-				ret += c;
-			}
-		}
-		return ret;
 	}
 
 	/**
