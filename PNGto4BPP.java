@@ -6,10 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.DataBufferByte;
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,12 +16,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -41,7 +38,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
 import SpriteManipulator.SpriteManipulator;
-import SpriteMe.SpriteMe;
+
 // class
 public class PNGto4BPP {
 	// version number
@@ -106,8 +103,8 @@ public class PNGto4BPP {
 
 		// window building
 		final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
-		final JFrame debugFrame = new JFrame("Debug");
-		final JFrame aboutFrame = new JFrame("About");
+		final JDialog debugFrame = new JDialog(frame, "Debug");
+		final JDialog aboutFrame = new JDialog(frame, "About");
 		final Dimension d = new Dimension(600,182);
 		final Dimension d2 = new Dimension(600,600);
 		final Dimension textFieldD = new Dimension(250, 20);
@@ -219,16 +216,15 @@ public class PNGto4BPP {
 		final JMenu fileMenu = new JMenu("File");
 		final JMenuItem debug = new JMenuItem("Debug");
 		ImageIcon bee = new ImageIcon(
-				SpriteMe.class.getResource("/PNGto4BPP/Bee.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/Bee.png")
 			);
 		debug.setIcon(bee);
-		fileMenu.add(debug);
 		fileMenu.add(debug);
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				SpriteMe.class.getResource("/PNGto4BPP/Mirror.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/Mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -239,11 +235,11 @@ public class PNGto4BPP {
 
 		// help menu
 		final JMenu helpMenu = new JMenu("Help");
-		
+
 		// Acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
 		ImageIcon mapIcon = new ImageIcon(
-				SpriteMe.class.getResource("/PNGto4BPP/Map.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/Map.png")
 			);
 		peeps.setIcon(mapIcon);
 		helpMenu.add(peeps);
@@ -296,29 +292,30 @@ public class PNGto4BPP {
 		final File EEE = new File("");
 
 		// about
-		peeps.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		peeps.addActionListener(
+			arg0 -> {
 				aboutFrame.setVisible(true);
-			}});
+			});
 
 		// debug
-		debug.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		debug.addActionListener(
+			arg0 -> {
 				debugLog.setText(debugLogging.toString());
 				debugFrame.setVisible(true);
-			}});
+			});
 
 		// debug clear
-		clrLog.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		clrLog.addActionListener(
+			arg0 -> {
 				debugLogging.flush();
 				debugLogging.getBuffer().setLength(0);
 				debugLogging.write("Debug log:\n");
 				debugLog.setText(debugLogging.toString());
-			}});
+			});
+
 		// export log to a text file
-		expLog.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		expLog.addActionListener(
+			arg0 -> {
 				removeFilters(explorer);
 				explorer.setSelectedFile(new File("error log (" + System.currentTimeMillis() + ").txt"));
 				explorer.setFileFilter(logFilter);
@@ -358,11 +355,11 @@ public class PNGto4BPP {
 						"Error log written to:\n" + n,
 						"YAY",
 						JOptionPane.PLAIN_MESSAGE);
-			}});
+			});
 
 		// image button
-		imageBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		imageBtn.addActionListener(
+			arg0 -> {
 				removeFilters(explorer);
 				explorer.setSelectedFile(EEE);
 				explorer.setFileFilter(imgFilter);
@@ -380,11 +377,11 @@ public class PNGto4BPP {
 						imageName.setText(n);
 					}
 				}
-			}});
+			});
 
 		// palette button
-		palBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		palBtn.addActionListener(
+			arg0 -> {
 				removeFilters(explorer);
 				explorer.setSelectedFile(EEE);
 				if (palOptions.getSelectedIndex() == 1) {
@@ -407,11 +404,11 @@ public class PNGto4BPP {
 						palName.setText(n);
 					}
 				}
-			}});
+			});
 
 		// file name button
-		fileNameBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		fileNameBtn.addActionListener(
+			arg0 -> {
 				removeFilters(explorer);
 				explorer.setSelectedFile(EEE);
 				explorer.setFileFilter(sprFilter);
@@ -437,13 +434,13 @@ public class PNGto4BPP {
 					}
 					fileName.setText(n);
 				}
-			}});
+			});
 
 		// run button
-		runBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		runBtn.addActionListener(
+			arg0 -> {
 				ConvertPngToSprite(false);
-			}});
+			});
 
 		//If arguments are greater than 1, then we have the necessary arguments to do command line processing.
 		if(args.length > 1) {
