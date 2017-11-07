@@ -416,7 +416,7 @@ public class PNGto4BPP {
 				explorer.setSelectedFile(EEE);
 				explorer.setFileFilter(sprFilter);
 				explorer.addChoosableFileFilter(romFilter);
-				int option = explorer.showOpenDialog(fileNameBtn);
+				int option = explorer.showSaveDialog(fileNameBtn);
 				if (option == JFileChooser.CANCEL_OPTION) {
 					return;
 				}
@@ -445,15 +445,15 @@ public class PNGto4BPP {
 				convertPngToSprite(false);
 			});
 
-		//If arguments are greater than 1, then we have the necessary arguments to do command line processing.
+		// If arguments are greater than 1, then we have the necessary arguments to do command line processing.
 		if(args.length > 1) {
-			//If we encountered no errors processing the arguments, then convert and end program.
+			// If we encountered no errors processing the arguments, then convert and end program.
 			if(ProcessArgs(args)) {
 				System.exit(0);
 			}
-			//Leave program open with the fields that succeeded in being set.
+			// Leave program open with the fields that succeeded in being set.
 			else {
-				System.out.println("Failed to Process Arguments.");
+				System.out.println("Failed to process arguments.");
 			}
 		}
 
