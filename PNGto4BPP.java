@@ -31,11 +31,10 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
-import SpriteManipulator.SpriteManipulator;
+import SpriteManipulator.*;
 
 // class
 public class PNGto4BPP {
@@ -253,7 +252,7 @@ public class PNGto4BPP {
 		frame.setJMenuBar(menu);
 
 		// file explorer
-		final JFileChooser explorer = new JFileChooser();
+		final BetterJFileChooser explorer = new BetterJFileChooser();
 
 		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
 
@@ -319,7 +318,7 @@ public class PNGto4BPP {
 		// export log to a text file
 		expLog.addActionListener(
 			arg0 -> {
-				removeFilters(explorer);
+				explorer.removeAllFilters();
 				explorer.setSelectedFile(new File("error log (" + System.currentTimeMillis() + ").txt"));
 				explorer.setFileFilter(logFilter);
 				int option = explorer.showSaveDialog(expLog);
@@ -364,7 +363,7 @@ public class PNGto4BPP {
 		// image button
 		imageBtn.addActionListener(
 			arg0 -> {
-				removeFilters(explorer);
+				explorer.removeAllFilters();
 				explorer.setSelectedFile(EEE);
 				explorer.setFileFilter(imgFilter);
 				int option = explorer.showOpenDialog(imageBtn);
@@ -386,7 +385,7 @@ public class PNGto4BPP {
 		// palette button
 		palBtn.addActionListener(
 			arg0 -> {
-				removeFilters(explorer);
+				explorer.removeAllFilters();
 				explorer.setSelectedFile(EEE);
 				if (palOptions.getSelectedIndex() == 1) {
 					explorer.setFileFilter(binPalFilter);
@@ -413,7 +412,7 @@ public class PNGto4BPP {
 		// file name button
 		fileNameBtn.addActionListener(
 			arg0 -> {
-				removeFilters(explorer);
+				explorer.removeAllFilters();
 				explorer.setSelectedFile(EEE);
 				explorer.setFileFilter(sprFilter);
 				explorer.addChoosableFileFilter(romFilter);
@@ -1037,12 +1036,6 @@ public class PNGto4BPP {
 		return ret;
 	}
 
-	public static void removeFilters(JFileChooser ex) {
-		FileFilter[] exlist = ex.getChoosableFileFilters();
-		for (FileFilter r : exlist) {
-			ex.removeChoosableFileFilter(r);
-		}
-	}
 	// errors
 
 	/**
