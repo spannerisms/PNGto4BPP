@@ -146,7 +146,7 @@ public class PNGto4BPP {
 		fullWrap.add(fileNameBtn, w);
 
 		// convert
-		final JButton runBtn = new JButton("Convert!");
+		final JButton runBtn = new JButton("Convert");
 		w.gridy++;
 		w.gridx = 0;
 		w.gridwidth = 3;
@@ -331,7 +331,7 @@ public class PNGto4BPP {
 						JOptionPane.showMessageDialog(frame,
 								"Debug logs must be of the following extensions:\n" +
 										String.join(", ",LOGEXTS),
-								"Oops",
+								"Beep",
 								JOptionPane.WARNING_MESSAGE);
 						return;
 					}
@@ -497,7 +497,10 @@ public class PNGto4BPP {
 							}
 						}
 						else {
-							System.out.println("The argument: " + tokens[1] + " is not a valid integer to specify the palette Option. 0: ASCII, 1:Binary, 2:Extract from Last Block of PNG");
+							System.out.println("The argument: " +
+									tokens[1] +
+									" is not a valid integer to specify the palette option. " +
+									"0: ASCII ; 1:Binary ; 2:Extract from last block of PNG");
 							argumentErrorsFound = true;
 						}
 						break;
@@ -518,7 +521,7 @@ public class PNGto4BPP {
 				System.out.println("The argument: " + args[i] + " is invalid.");
 				argumentErrorsFound = true;
 			}
-		} //End of For Loops
+		} // end loops
 
 		if(argumentErrorsFound) {
 			return false;
@@ -526,13 +529,13 @@ public class PNGto4BPP {
 
 		// Ensure imgSrc exists
 		if(imgSrc == "") {
-			System.out.println("No Source Image was specified or was not specified correctly.");
+			System.out.println("No source image was specified or was not specified correctly.");
 			argumentErrorsFound = true;
 		}
 
 		// enters here if palMethod is between 1-3
 		if(palSrc == "" && (palOption == 0 || palOption == 1)) {
-			System.out.println("No palette Source was specified despite using a palette method that requires it.");
+			System.out.println("No palette source was specified despite using a palette method that requires it.");
 			argumentErrorsFound = true;
 		}
 
@@ -613,7 +616,7 @@ public class PNGto4BPP {
 			JOptionPane.showMessageDialog(frame,
 					"Images must be of the following extensions:\n" +
 							String.join(", ", IMAGEEXTS),
-					"Oops",
+					"Good job",
 					JOptionPane.WARNING_MESSAGE);
 			extensionERR = true;
 		}
@@ -631,7 +634,7 @@ public class PNGto4BPP {
 				JOptionPane.showMessageDialog(frame,
 						"Palettes must be of the following extensions:\n" +
 								String.join(", ", PALETTEEXTS),
-						"Oops",
+						"HEY! LISTEN!",
 						JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
 			}
@@ -664,7 +667,7 @@ public class PNGto4BPP {
 				JOptionPane.showMessageDialog(frame,
 						"Export location must be of the following extensions:\n" +
 								String.join(", ", EXPORTEXTS),
-								"Oops",
+								"C'mon",
 								JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
 			} else {
@@ -683,14 +686,14 @@ public class PNGto4BPP {
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Image file not found",
-					"Oops",
+					"Where'd it go?",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Error reading image",
-					"Oops",
+					"Well huh",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
@@ -705,7 +708,7 @@ public class PNGto4BPP {
 		} catch (BadDimensionsException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Image dimensions must be 128x448",
-					"Oops",
+					"Puh-lease",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
@@ -722,7 +725,7 @@ public class PNGto4BPP {
 			} catch (FileNotFoundException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Palette file not found",
-						"Oops",
+						"Hmmmmm",
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace(debugWriter);
 				return false;
@@ -741,14 +744,14 @@ public class PNGto4BPP {
 			} catch (NumberFormatException|IOException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Error reading palette",
-						"Oops",
+						"Uhhhhhhh",
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace(debugWriter);
 				return false;
 			} catch (ShortPaletteException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Unable to find 16 colors",
-						"Oops",
+						"This one is YOUR fault",
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace(debugWriter);
 				return false;
@@ -760,7 +763,7 @@ public class PNGto4BPP {
 			if (!SpriteManipulator.testFileType(paletteName, "pal")) {
 				JOptionPane.showMessageDialog(frame,
 						"Binary palette reading must by a .PAL file",
-						"Oops",
+						"Gosh dernit",
 						JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
@@ -788,14 +791,13 @@ public class PNGto4BPP {
 		} catch (NullPointerException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Invalid file name",
-					"Oops",
+					"FFS",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 		}
 
 		// split bytes into blocks
 		eightbyeight = SpriteManipulator.indexAnd8x8(pixels, palette);
-
 		byte[] SNESdata = SpriteManipulator.exportToSPR(eightbyeight, palData);
 
 		// write data to SPR file
@@ -809,7 +811,7 @@ public class PNGto4BPP {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Error writing sprite",
-					"Oops",
+					"Drats!",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
@@ -873,8 +875,8 @@ public class PNGto4BPP {
 
 		// read palette
 		int pali = 0;
-		while ( (line = pal.readLine()) != null) {
-			// look with 3 numbers
+		while ((line = pal.readLine()) != null) {
+			// look for 3 numbers
 			String[] line2 = (line.trim()).split("\\D+");
 			int colori = 0;
 			int[] colorArray = new int[3];
