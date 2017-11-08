@@ -55,6 +55,9 @@ public class PNGto4BPP {
 	static final JTextField palName = new JTextField("");
 	static final JTextField fileName = new JTextField("");
 
+	// offsets used by palette trickery to store gloves colors
+	static int[] GLOVE_PAL_INDICES = new int[] { 16, 32 };
+
 	// palette reading methods
 	static String[] palChoices = {
 				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
@@ -572,7 +575,7 @@ public class PNGto4BPP {
 		FileInputStream fsInput = new FileInputStream(sprTarget);
 		fsInput.read(sprite_data);
 		fsInput.close();
-		SpriteManipulator.patchRom(sprite_data, romTarget);
+		//SpriteManipulator.patchRom(sprite_data, romTarget);
 	}
 
 	public static boolean IsInteger(String string) {
@@ -605,6 +608,7 @@ public class PNGto4BPP {
 		BufferedReader br;
 		int[] palette = null;
 		byte[] palData = null;
+		byte[] glovesData = null;
 		byte[][][] eightbyeight;
 		int palChoice = palOptions.getSelectedIndex(); // see which palette method we're using
 
@@ -798,15 +802,17 @@ public class PNGto4BPP {
 
 		// split bytes into blocks
 		eightbyeight = SpriteManipulator.indexAnd8x8(pixels, palette);
-		byte[] SNESdata = SpriteManipulator.exportToSPR(eightbyeight, palData);
+		glovesData = SpriteManipulator.getGlovesDataFromArray(palette);
+		byte[] sprData = SpriteManipulator.exportToSPR(eightbyeight);
 
 		// write data to SPR file
 		try {
 			if (patchingROM) {
-				SpriteManipulator.patchRom(SNESdata, loc);
+				SpriteManipulator.patchRom(sprData, palData, glovesData, loc);
 			}
 			else {
-				SpriteManipulator.writeSPR(SNESdata, loc);
+				byte[] fullFile = SpriteManipulator.makeSPRFile(sprData, palData, glovesData);
+				SpriteManipulator.writeFile(fullFile, loc);
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame,
@@ -870,7 +876,7 @@ public class PNGto4BPP {
 	 */
 	public static int[] getPaletteColorsFromFile(BufferedReader pal)
 			throws NumberFormatException, IOException, ShortPaletteException {
-		int[] palret = new int[64];
+		int[] ret = new int[64];
 		String line;
 
 		// read palette
@@ -899,7 +905,7 @@ public class PNGto4BPP {
 				int r = colorArray[0];
 				int g = colorArray[1];
 				int b = colorArray[2];
-				palret[pali] = (r * 1000000) + (g * 1000) + b; // add to palette as RRRGGGBBB
+				ret[pali] = (r * 1000000) + (g * 1000) + b; // add to palette as RRRGGGBBB
 				pali++; // increment palette index
 			}
 			if (pali == 64) {
@@ -917,13 +923,17 @@ public class PNGto4BPP {
 			pali = 64;
 		}
 		for (int i = 0; i < pali; i++) {
-			newret[i] = palret[i];
+			newret[i] = ret[i];
 		}
 		if (pali < 64) {
 			for (int i = pali; i < 64; i++) {
-				newret[i] = palret[i%16];
+				newret[i] = ret[i%16];
 			}
 		}
+
+		// add gloves colors
+		newret = addGlovesToRGBPal(newret);
+
 		return newret;
 	}
 
@@ -944,7 +954,7 @@ public class PNGto4BPP {
 	 */
 	public static int[] getPaletteColorsFromPaintNET(BufferedReader pal)
 			throws NumberFormatException, IOException, ShortPaletteException {
-		int[] palret = new int[64];
+		int[] ret = new int[64];
 		String line;
 
 		// read palette
@@ -956,7 +966,7 @@ public class PNGto4BPP {
 				int r = Integer.parseInt( ("" + line2[2] + line2[3]), 16);
 				int g = Integer.parseInt( ("" + line2[4] + line2[5]), 16);
 				int b = Integer.parseInt( ("" + line2[6] + line2[7]), 16);
-				palret[pali] = (r * 1000000) + (g * 1000) + b; // add to palette as RRRGGGBBB
+				ret[pali] = (r * 1000000) + (g * 1000) + b; // add to palette as RRRGGGBBB
 				pali++; // increment palette index
 			}
 			if (pali == 64) {
@@ -974,14 +984,18 @@ public class PNGto4BPP {
 			pali = 64;
 		}
 		for (int i = 0; i < pali; i++) {
-			newret[i] = palret[i];
+			newret[i] = ret[i];
 		}
 		if (pali < 64) {
 			for (int i = pali; i < 64; i++) {
-				newret[i] = palret[i%16];
+				newret[i] = ret[i%16];
 			}
 		}
-		return palret;
+
+		// add gloves colors
+		ret = addGlovesToRGBPal(ret);
+
+		return ret;
 	}
 
 	/**
@@ -994,32 +1008,38 @@ public class PNGto4BPP {
 	 * (green mail's transparent pixel),
 	 * it will be replaced with the corresponding color at green mail for that palette's index.
 	 * This is done as an attempt to completely fill out all 64 colors of the palette.
+	 * <br><br>
+	 * After all 64 colors are filled, gloves colors will be added from the eventually unused
+	 * indices 16 and 32.
 	 * @param pixels - image raster, assumed ABGR
 	 * @return
 	 */
 	public static int[] palExtract(byte[] pixels) {
-		int[] palret = new int[64];
+		int[] ret = new int[64];
 		int pali = 0;
 		int startAt = (128 * 448 - 8) - (128 * 7);
 		int endAt = startAt + (8 * 128);
 		for (int i = startAt; i < endAt; i+= 128) {
 			for (int j = 0; j < 8; j++) {
 				int k = i + j;
-				int b = (pixels[k*4+1]+256)%256;
-				int g = (pixels[k*4+2]+256)%256;
-				int r = (pixels[k*4+3]+256)%256;
-				palret[pali] = (1000000 * r) + (1000 * g) + b;
+				int b = Byte.toUnsignedInt(pixels[k*4+1]);
+				int g = Byte.toUnsignedInt(pixels[k*4+2]);
+				int r = Byte.toUnsignedInt(pixels[k*4+3]);
+				ret[pali] = (1000000 * r) + (1000 * g) + b;
 				pali++;
 			}
 		}
 
 		// fill out the palette by removing empty indices
-		for (int i = 16; i < palret.length; i++) {
-			if (palret[i] == palret[0])
-				palret[i] = palret[i%16];
+		for (int i = 16; i < 64; i++) {
+			if (ret[i] == ret[0])
+				ret[i] = ret[i%16];
 		}
 
-		return palret;
+		// add gloves colors
+		ret = addGlovesToRGBPal(ret);
+
+		return ret;
 	}
 
 	public static int[] palFromBinary(byte[] pal) {
@@ -1031,9 +1051,29 @@ public class PNGto4BPP {
 			int b = Byte.toUnsignedInt(pal[pos+2]);
 			ret[i] = (r * 1000000) + (g * 1000) + b;
 		}
+
+		// add gloves colors
+		ret = addGlovesToRGBPal(ret);
+
 		return ret;
 	}
 
+	public static int[] addGlovesToRGBPal(int[] pal) {
+		int[] ret = new int[66];
+		// clone most of the 64 length array
+		for (int i = 0; i < 64; i++) {
+			ret[i] = pal[i];
+		}
+
+		// set gloves colors using transparent indices of 2nd and 3rd mail palettes
+		for (int i = 0; i < GLOVE_PAL_INDICES.length; i++) {
+			if (ret[GLOVE_PAL_INDICES[i]] != 0) {
+				ret[64+i] = ret[GLOVE_PAL_INDICES[i]];
+			}
+		}
+
+		return ret;
+	}
 	// errors
 
 	/**
