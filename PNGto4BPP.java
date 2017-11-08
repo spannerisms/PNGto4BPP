@@ -803,16 +803,15 @@ public class PNGto4BPP {
 		// split bytes into blocks
 		eightbyeight = SpriteManipulator.indexAnd8x8(pixels, palette);
 		glovesData = SpriteManipulator.getGlovesDataFromArray(palette);
-		byte[] sprData = SpriteManipulator.exportToSPR(eightbyeight);
-
+		byte[] sprData = SpriteManipulator.export8x8ToSPR(eightbyeight);
+		SPRFile newSPR = new SPRFile(sprData, palData, glovesData);
 		// write data to SPR file
 		try {
 			if (patchingROM) {
-				SpriteManipulator.patchRom(sprData, palData, glovesData, loc);
+				SpriteManipulator.patchRom(loc, newSPR);
 			}
 			else {
-				byte[] fullFile = SpriteManipulator.makeSPRFile(sprData, palData, glovesData);
-				SpriteManipulator.writeFile(fullFile, loc);
+				SpriteManipulator.writeSPRFile(loc, newSPR);
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame,
@@ -820,6 +819,18 @@ public class PNGto4BPP {
 					"Drats!",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
+			return false;
+		} catch (NotSPRException e) {
+			JOptionPane.showMessageDialog(frame,
+					"File is not SPR file",
+					"Not my job",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		} catch (BadChecksumException e) {
+			JOptionPane.showMessageDialog(frame,
+					"Bad checksum; file may be corrupted",
+					"Invalid",
+					JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
 
