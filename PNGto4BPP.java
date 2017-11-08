@@ -1037,8 +1037,8 @@ public class PNGto4BPP {
 	/**
 	 * Palette has <16 colors
 	 */
+	@SuppressWarnings("serial")
 	public static class ShortPaletteException extends Exception {
-		private static final long serialVersionUID = 1L;
 		public ShortPaletteException(String message) {
 			super(message);
 		}
@@ -1049,8 +1049,8 @@ public class PNGto4BPP {
 	/**
 	 * Image is wrong dimensions
 	 */
+	@SuppressWarnings("serial")
 	public static class BadDimensionsException extends Exception {
-		private static final long serialVersionUID = 1L;
 		public BadDimensionsException(String message) {
 			super(message);
 		}
