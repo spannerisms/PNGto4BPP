@@ -39,11 +39,7 @@ import SpriteManipulator.*;
 // class
 public class PNGto4BPP {
 	// version number
-	static final String VERSION = "v1.3.5";
-
-	// to spit out errors
-	public PNGto4BPP() {super();}
-	static final PNGto4BPP controller = new PNGto4BPP();
+	static final String VERSION_TAG = "v1.3.5";
 
 	// accepted extensions
 	static final String[] IMAGEEXTS = { "png" }; // image import types
@@ -66,7 +62,7 @@ public class PNGto4BPP {
 				"Extract from last block of PNG"
 				};
 	static final JComboBox<String>	palOptions = new JComboBox<String>(palChoices);
-	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
+	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 
 	static StringWriter debugLogging;
 	static PrintWriter debugWriter;
@@ -100,7 +96,7 @@ public class PNGto4BPP {
 		} // end metal
 
 		// window building
-		final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
+		final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 		final JDialog debugFrame = new JDialog(frame, "Debug");
 		final JDialog aboutFrame = new JDialog(frame, "About");
 		final Dimension d = new Dimension(600,182);
@@ -840,7 +836,7 @@ public class PNGto4BPP {
 		int w = img.getWidth();
 		int h = img.getHeight();
 		if (w != 128 || h != 448) {
-			throw controller.new BadDimensionsException("Invalid dimensions of {" + w + "," + h + "}");
+			throw new BadDimensionsException("Invalid dimensions of {" + w + "," + h + "}");
 		}
 		return SpriteManipulator.getImageRaster(img);
 	}
@@ -910,7 +906,7 @@ public class PNGto4BPP {
 		}
 		// short palettes throw an error
 		if (pali < 16 ) {
-			throw controller.new ShortPaletteException("Only " + pali + " colors were found.");
+			throw new ShortPaletteException("Only " + pali + " colors were found.");
 		}
 		// truncate long palettes
 		int[] newret = new int[64];
@@ -967,7 +963,7 @@ public class PNGto4BPP {
 		}
 		// Paint.NET forces 96 colors, but put this here just in case
 		if (pali < 16 ) {
-			throw controller.new ShortPaletteException("Only " + pali + " colors were found.");
+			throw new ShortPaletteException("Only " + pali + " colors were found.");
 		}
 		// truncate long palettes
 		int[] newret = new int[64];
@@ -1041,7 +1037,7 @@ public class PNGto4BPP {
 	/**
 	 * Palette has <16 colors
 	 */
-	public class ShortPaletteException extends Exception {
+	public static class ShortPaletteException extends Exception {
 		private static final long serialVersionUID = 1L;
 		public ShortPaletteException(String message) {
 			super(message);
@@ -1053,7 +1049,7 @@ public class PNGto4BPP {
 	/**
 	 * Image is wrong dimensions
 	 */
-	public class BadDimensionsException extends Exception {
+	public static class BadDimensionsException extends Exception {
 		private static final long serialVersionUID = 1L;
 		public BadDimensionsException(String message) {
 			super(message);
