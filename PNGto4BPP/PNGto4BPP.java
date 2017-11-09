@@ -42,7 +42,7 @@ import SpriteManipulator.*;
 // class
 public class PNGto4BPP {
 	// version number
-	static final String VERSION_TAG = "v1.3.5";
+	static final String VERSION_TAG = "v1.4.0";
 
 	// accepted extensions
 	static final String[] IMAGEEXTS = { "png" }; // image import types
@@ -76,6 +76,10 @@ public class PNGto4BPP {
 	static StringWriter debugLogging;
 	static PrintWriter debugWriter;
 
+	// MY_NAME_SHORT will never change; the path will
+	static final String MY_NAME_SHORT = "myname.txt";
+	static String MY_NAME_PATH = MY_NAME_SHORT;
+
 	// Summary
 	// Command line usage:
 	// imgSrc: Full path for image
@@ -86,7 +90,15 @@ public class PNGto4BPP {
 
 	// main and stuff
 	public static void main(String[] args) {
-		//try to set metal
+		// try setting names from defaults
+		try {
+			MY_NAME_PATH = (new File(MY_NAME_PATH)).getAbsolutePath();
+			readAuthor();
+		} catch (Exception e) {
+			// do nothing
+		}
+
+		// try to set metal
 		try {
 			UIManager.setLookAndFeel("metal");
 		} catch (UnsupportedLookAndFeelException
@@ -161,6 +173,7 @@ public class PNGto4BPP {
 		w.gridwidth = 3;
 		fullWrap.add(runBtn, w);
 
+		// container layering
 		wrap.putConstraint(SpringLayout.NORTH, fullWrap, 5,
 				SpringLayout.NORTH, frame);
 		wrap.putConstraint(SpringLayout.EAST, fullWrap, 0,
@@ -170,9 +183,20 @@ public class PNGto4BPP {
 		frameWrap.add(fullWrap);
 
 		// Sprite name
-		final JLabel sprNameLbl = new JLabel("Sprite name", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.NORTH, sprNameLbl, 15,
+		final JLabel metaLbl =
+				new JLabel("<html><span style=\"font-size:120%; text-decoration: underline;\">" +
+						"Edit sprite meta data</span></html>",
+						SwingConstants.LEFT);
+		wrap.putConstraint(SpringLayout.NORTH, metaLbl, 5,
 				SpringLayout.SOUTH, fullWrap);
+		wrap.putConstraint(SpringLayout.WEST, metaLbl, 5,
+				SpringLayout.WEST, frame);
+		frameWrap.add(metaLbl);
+
+		// Sprite name
+		final JLabel sprNameLbl = new JLabel("Sprite name", SwingConstants.RIGHT);
+		wrap.putConstraint(SpringLayout.NORTH, sprNameLbl, 10,
+				SpringLayout.SOUTH, metaLbl);
 		wrap.putConstraint(SpringLayout.WEST, sprNameLbl, 15,
 				SpringLayout.WEST, frame);
 		frameWrap.add(sprNameLbl);
@@ -224,6 +248,24 @@ public class PNGto4BPP {
 		wrap.putConstraint(SpringLayout.WEST, authNameROM, 0,
 				SpringLayout.WEST, sprName);
 		frameWrap.add(authNameROM);
+
+		// save name button
+		final JButton saveNameBtn = new JButton("Save my name as defaults");
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, saveNameBtn, 0,
+				SpringLayout.VERTICAL_CENTER, authNameLbl);
+		wrap.putConstraint(SpringLayout.WEST, saveNameBtn, 15,
+				SpringLayout.EAST, authName);
+		frameWrap.add(saveNameBtn);
+
+		// save name button
+		final JButton loadNameBtn = new JButton("Load my defaults");
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 0,
+				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
+		wrap.putConstraint(SpringLayout.WEST, loadNameBtn, 0,
+				SpringLayout.WEST, saveNameBtn);
+		wrap.putConstraint(SpringLayout.EAST, loadNameBtn, 0,
+				SpringLayout.EAST, saveNameBtn);
+		frameWrap.add(loadNameBtn);
 
 		// Acknowledgments
 		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -502,12 +544,58 @@ public class PNGto4BPP {
 
 		// run button
 		runBtn.addActionListener(
+				arg0 -> {
+					convertPngToSprite(false);
+				});
+
+		// save name to txt file
+		saveNameBtn.addActionListener(
+				arg0 -> {
+					PrintWriter s;
+					try {
+						s = new PrintWriter(MY_NAME_PATH);
+					} catch (FileNotFoundException e) {
+						JOptionPane.showMessageDialog(frame,
+								"There was a problem creating this file",
+								"Uhhhhhhhhhhhhhh",
+								JOptionPane.PLAIN_MESSAGE);
+						return;
+					}
+
+					s.write(authName.getText() + '\0' + authNameROM.getText());
+					s.close();
+					JOptionPane.showMessageDialog(frame,
+							"Name defaults saved to:\n" +
+									"'" + MY_NAME_SHORT + "'" +
+								"\n\nKeep this file in the same directory as PNGto4BPP.jar",
+							"SUCCESSSSSSSSSSsssssssssssssss",
+							JOptionPane.PLAIN_MESSAGE);
+				});
+
+		// load default names
+		loadNameBtn.addActionListener(
 			arg0 -> {
-				convertPngToSprite(false);
+				// try setting names from defaults
+				try {
+					MY_NAME_PATH = (new File(MY_NAME_PATH)).getAbsolutePath();
+					readAuthor();
+				} catch (FileNotFoundException e) {
+					JOptionPane.showMessageDialog(frame,
+							"The file " +
+								"'" + MY_NAME_SHORT + "'" +
+								" does not exist in the current directory.",
+							"Who are you?",
+							JOptionPane.PLAIN_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame,
+							"There was an unknown problem reading this file",
+							"PROBLEM!",
+							JOptionPane.PLAIN_MESSAGE);
+				}
 			});
 
 		// If arguments are greater than 1, then we have the necessary arguments to do command line processing.
-		if(args.length > 1) {
+		if (args.length > 1) {
 			// If we encountered no errors processing the arguments, then convert and end program.
 			if(ProcessArgs(args)) {
 				System.exit(0);
@@ -517,7 +605,6 @@ public class PNGto4BPP {
 				System.out.println("Failed to process arguments.");
 			}
 		}
-
 	}
 
 // Summary
@@ -787,7 +874,7 @@ public class PNGto4BPP {
 		if (palChoice == 0) {
 			// get palette file
 			try {
-				br = getPaletteFile(paletteName);
+				br = getFileReader(paletteName);
 			} catch (FileNotFoundException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Palette file not found",
@@ -940,16 +1027,30 @@ public class PNGto4BPP {
 	}
 
 	/**
-	 * Finds the palette file (as a .gpl or .pal) from <tt>palPath<tt>
+	 * Finds the file from {@code path}.
 	 * @param palPath - full file path of the palette
 	 * @throws FileNotFoundException
 	 */
-	public static BufferedReader getPaletteFile(String palPath)	throws FileNotFoundException {
-		FileReader pal = new FileReader(palPath);
-		BufferedReader ret = new BufferedReader(pal);
+	public static BufferedReader getFileReader(String path)	throws FileNotFoundException {
+		FileReader fr = new FileReader(path);
+		BufferedReader ret = new BufferedReader(fr);
 		return ret;
 	}
 
+	/**
+	 * Tries to read authorName and authorNameROM from {@code myname.txt}.
+	 */
+	public static void readAuthor() throws FileNotFoundException, IOException {
+		BufferedReader br = getFileReader(MY_NAME_PATH);
+		String line = br.readLine();
+		String[] authSplit = line.split("\0"); // split by null terminator
+
+		authName.setText(authSplit[0]);
+		// just in case we somehow are missing the null terminator separator
+		if (authSplit.length > 1) {
+			authNameROM.setText(authSplit[1]);
+		}
+	}
 	/**
 	 * Reads a GIMP ({@code .gpl}) or Graphics Gale ({@code .pal}) palette file for colors.
 	 * <br><br>
