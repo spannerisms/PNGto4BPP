@@ -83,10 +83,10 @@ public class PNGto4BPP {
 	// Summary
 	// Command line usage:
 	// imgSrc: Full path for image
-	// palMethod: palFileMethod [0:ASCII(.GPL|.PAL|.TXT), 1:Binary(YY-CHR .PAL), 2:Extract from Last Block of PNG]
-	// palSrc:(Used if Method 0 or 1 selected): Full Path for Palette File.
-	// sprTarget(optional): Name of sprite that will be created. Will default to name of imgSrc with new extension.
-	// romTarget(optional): Path of ROM to patch.
+	// palMethod: palFileMethod [0:ASCII (.GPL|.PAL|.TXT), 1:Binary (YY-CHR .PAL), 2:Extract from last block of PNG]
+	// palSrc (Used if method 0 or 1 is selected): Full Path for Palette File.
+	// sprTarget (optional): Name of sprite that will be created. Will default to name of imgSrc with new extension.
+	// romTarget (optional): Path of ROM to patch.
 
 	// main and stuff
 	public static void main(String[] args) {
@@ -229,7 +229,7 @@ public class PNGto4BPP {
 				SpringLayout.WEST, sprName);
 		frameWrap.add(authName);
 
-		// Sprite NameROM
+		// Author name in ROM
 		final JLabel authNameROMLbl = new JLabel("<html>Your name<br>(but short)</html>", SwingConstants.RIGHT);
 		wrap.putConstraint(SpringLayout.NORTH, authNameROMLbl, 10,
 				SpringLayout.SOUTH, authNameLbl);
@@ -257,7 +257,7 @@ public class PNGto4BPP {
 				SpringLayout.EAST, authName);
 		frameWrap.add(saveNameBtn);
 
-		// save name button
+		// load name button
 		final JButton loadNameBtn = new JButton("Load my defaults");
 		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 0,
 				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
