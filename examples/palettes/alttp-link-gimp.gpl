@@ -18,7 +18,7 @@ Columns: 0
 224 144  80	Gloves
 136  88  40	Sleeves
 192 128 240	Water
-  0   0   0	Untitled
+184 184 168	Glove color
 248 248 248	Untitled
 240 216  64	Untitled
 184 104  32	Untitled
@@ -34,7 +34,7 @@ Columns: 0
 224 144  80	Untitled
 200  96  32	Untitled
 192 128 240	Untitled
-  0   0   0	Untitled
+176 216   0	Mitts color
 248 248 248	Untitled
 240 216  64	Untitled
 184 104  32	Untitled
@@ -50,7 +50,7 @@ Columns: 0
 224 144  80	Untitled
  56 136  64	Untitled
 192 128 240	Untitled
-  0   0   0	Untitled
+  0   0   0	Transparent - Bunny holds no data here
 248 248 248	Untitled
 240 216  64	Untitled
 184 104  32	Untitled
