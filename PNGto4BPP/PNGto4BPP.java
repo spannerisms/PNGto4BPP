@@ -21,7 +21,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -29,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -54,6 +57,9 @@ public class PNGto4BPP {
 	static final JTextField imageName = new JTextField("");
 	static final JTextField palName = new JTextField("");
 	static final JTextField fileName = new JTextField("");
+	static final JFormattedTextField sprName = new JFormattedTextField();
+	static final JFormattedTextField authName = new JFormattedTextField();
+	static final JFormattedTextField authNameROM = new JFormattedTextField();
 
 	// offsets used by palette trickery to store gloves colors
 	static int[] GLOVE_PAL_INDICES = new int[] { 16, 32 };
@@ -102,7 +108,7 @@ public class PNGto4BPP {
 		final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 		final JDialog debugFrame = new JDialog(frame, "Debug");
 		final JDialog aboutFrame = new JDialog(frame, "About");
-		final Dimension d = new Dimension(600,182);
+		final Dimension d = new Dimension(600,282);
 		final Dimension d2 = new Dimension(600,600);
 		final Dimension textFieldD = new Dimension(250, 20);
 		final TextArea debugLog = new TextArea("Debug log:",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -155,13 +161,69 @@ public class PNGto4BPP {
 		w.gridwidth = 3;
 		fullWrap.add(runBtn, w);
 
-		wrap.putConstraint(SpringLayout.NORTH, fullWrap, 15,
+		wrap.putConstraint(SpringLayout.NORTH, fullWrap, 5,
 				SpringLayout.NORTH, frame);
 		wrap.putConstraint(SpringLayout.EAST, fullWrap, 0,
 				SpringLayout.EAST, frame);
 		wrap.putConstraint(SpringLayout.WEST, fullWrap, 0,
 				SpringLayout.WEST, frame);
 		frameWrap.add(fullWrap);
+
+		// Sprite name
+		final JLabel sprNameLbl = new JLabel("Sprite name", SwingConstants.RIGHT);
+		wrap.putConstraint(SpringLayout.NORTH, sprNameLbl, 15,
+				SpringLayout.SOUTH, fullWrap);
+		wrap.putConstraint(SpringLayout.WEST, sprNameLbl, 15,
+				SpringLayout.WEST, frame);
+		frameWrap.add(sprNameLbl);
+
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, sprName, 0,
+				SpringLayout.VERTICAL_CENTER, sprNameLbl);
+		wrap.putConstraint(SpringLayout.EAST, sprName, 0,
+				SpringLayout.HORIZONTAL_CENTER, frame);
+		wrap.putConstraint(SpringLayout.WEST, sprName, 4,
+				SpringLayout.EAST, sprNameLbl);
+		frameWrap.add(sprName);
+
+		// Author name
+		final JLabel authNameLbl = new JLabel("Your name", SwingConstants.RIGHT);
+		wrap.putConstraint(SpringLayout.NORTH, authNameLbl, 15,
+				SpringLayout.SOUTH, sprName);
+		wrap.putConstraint(SpringLayout.EAST, authNameLbl, 0,
+				SpringLayout.EAST, sprNameLbl);
+		wrap.putConstraint(SpringLayout.WEST, authNameLbl, 15,
+				SpringLayout.WEST, frame);
+		frameWrap.add(authNameLbl);
+
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authName, 0,
+				SpringLayout.VERTICAL_CENTER, authNameLbl);
+		wrap.putConstraint(SpringLayout.EAST, authName, 0,
+				SpringLayout.HORIZONTAL_CENTER, frame);
+		wrap.putConstraint(SpringLayout.WEST, authName, 4,
+				SpringLayout.EAST, authNameLbl);
+		wrap.putConstraint(SpringLayout.WEST, authName, 0,
+				SpringLayout.WEST, sprName);
+		frameWrap.add(authName);
+
+		// Sprite NameROM
+		final JLabel authNameROMLbl = new JLabel("<html>Your name<br>(but short)</html>", SwingConstants.RIGHT);
+		wrap.putConstraint(SpringLayout.NORTH, authNameROMLbl, 10,
+				SpringLayout.SOUTH, authNameLbl);
+		wrap.putConstraint(SpringLayout.EAST, authNameROMLbl, 0,
+				SpringLayout.EAST, sprNameLbl);
+		wrap.putConstraint(SpringLayout.WEST, authNameROMLbl, 15,
+				SpringLayout.WEST, frame);
+		frameWrap.add(authNameROMLbl);
+
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameROM, 0,
+				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
+		wrap.putConstraint(SpringLayout.EAST, authNameROM, 0,
+				SpringLayout.HORIZONTAL_CENTER, authName);
+		wrap.putConstraint(SpringLayout.WEST, authNameROM, 4,
+				SpringLayout.EAST, authNameROMLbl);
+		wrap.putConstraint(SpringLayout.WEST, authNameROM, 0,
+				SpringLayout.WEST, sprName);
+		frameWrap.add(authNameROM);
 
 		// Acknowledgments
 		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -217,7 +279,7 @@ public class PNGto4BPP {
 		final JMenu fileMenu = new JMenu("File");
 		final JMenuItem debug = new JMenuItem("Debug");
 		ImageIcon bee = new ImageIcon(
-				PNGto4BPP.class.getResource("/images/bee.png")
+				PNGto4BPP.class.getResource("images/bee.png")
 			);
 		debug.setIcon(bee);
 		fileMenu.add(debug);
@@ -225,7 +287,7 @@ public class PNGto4BPP {
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				PNGto4BPP.class.getResource("/images/mirror.png")
+				PNGto4BPP.class.getResource("images/mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -240,7 +302,7 @@ public class PNGto4BPP {
 		// Acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
 		ImageIcon mapIcon = new ImageIcon(
-				PNGto4BPP.class.getResource("/images/map.png")
+				PNGto4BPP.class.getResource("images/map.png")
 			);
 		peeps.setIcon(mapIcon);
 		helpMenu.add(peeps);
@@ -281,7 +343,7 @@ public class PNGto4BPP {
 
 		// ico
 		final ImageIcon ico = new ImageIcon(
-				PNGto4BPP.class.getResource("/images/ico.png")
+				PNGto4BPP.class.getResource("images/ico.png")
 			);
 		frame.setIconImage(ico.getImage());
 		debugFrame.setIconImage(ico.getImage());
@@ -805,6 +867,23 @@ public class PNGto4BPP {
 		glovesData = SpriteManipulator.getGlovesDataFromArray(palette);
 		byte[] sprData = SpriteManipulator.export8x8ToSPR(eightbyeight);
 		SPRFile newSPR = new SPRFile(sprData, palData, glovesData);
+
+		// add sprite name
+		String sName = sprName.getText();
+		if (!sName.equals("")) {
+			newSPR.setSpriteName(sName);
+		}
+
+		// add author name
+		String aName = authName.getText();
+		if (!aName.equals("")) {
+			newSPR.setAuthorName(aName);
+		}
+
+		// set author name rom
+		String rName = authNameROM.getText();
+		newSPR.setAuthorNameROM(rName); // if it's blank, SPRFile class handles it
+
 		// write data to SPR file
 		try {
 			if (patchingROM) {
