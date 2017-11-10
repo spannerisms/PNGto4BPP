@@ -67,7 +67,7 @@ public class PNGto4BPP {
 	// palette reading methods
 	static String[] palChoices = {
 				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
-				"Binary (YY-CHR .PAL)",
+				"Binary (.PAL)",
 				"Extract from last block of PNG"
 				};
 	static final JComboBox<String>	palOptions = new JComboBox<String>(palChoices);
@@ -88,8 +88,17 @@ public class PNGto4BPP {
 	// sprTarget (optional): Name of sprite that will be created. Will default to name of imgSrc with new extension.
 	// romTarget (optional): Path of ROM to patch.
 
-	// main and stuff
+	// main
 	public static void main(String[] args) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				monsterMash();
+			}
+		});
+	}
+
+	// GUI
+	public static void monsterMash() {
 		// try setting names from defaults
 		try {
 			MY_NAME_PATH = (new File(MY_NAME_PATH)).getAbsolutePath();
@@ -283,7 +292,6 @@ public class PNGto4BPP {
 		peepsList.append(String.join(", ",
 				new String[] {
 						"CGG Zayik", // test sprite contributor
-						"RyuTech", // test sprite contributor
 						"Damon" // test sprite contributor
 				}));
 		peepsList.append("\n\nResources and development:\n");
@@ -293,11 +301,6 @@ public class PNGto4BPP {
 						"Zarby89", // various documentation and answers
 						"Damon", // Paint.NET palettes
 						"Sosuke3" // various snes code answers
-				}));
-		peepsList.append("\n\nIcon by:\n");
-		peepsList.append(String.join(", ",
-				new String[] {
-						"Hoodyha"
 				}));
 		peepsList.append("\n\nUpdates at:\n");
 		peepsList.append(String.join(", ", new String[] {
@@ -366,7 +369,7 @@ public class PNGto4BPP {
 				new FileNameExtensionFilter("Palette files (" +String.join(", ",PALETTEEXTS) +")",
 						PALETTEEXTS);
 		FileNameExtensionFilter binPalFilter =
-				new FileNameExtensionFilter("YY-CHR palettes", BINARYEXTS);
+				new FileNameExtensionFilter("Binary palettes", BINARYEXTS);
 		FileNameExtensionFilter sprFilter =
 				new FileNameExtensionFilter("ALttP Sprite files", SPREXTS);
 		FileNameExtensionFilter romFilter =
@@ -593,18 +596,6 @@ public class PNGto4BPP {
 							JOptionPane.PLAIN_MESSAGE);
 				}
 			});
-
-		// If arguments are greater than 1, then we have the necessary arguments to do command line processing.
-		if (args.length > 1) {
-			// If we encountered no errors processing the arguments, then convert and end program.
-			if(ProcessArgs(args)) {
-				System.exit(0);
-			}
-			// Leave program open with the fields that succeeded in being set.
-			else {
-				System.out.println("Failed to process arguments.");
-			}
-		}
 	}
 
 // Summary
@@ -911,7 +902,7 @@ public class PNGto4BPP {
 			}
 		}
 
-		// binary (YY-CHR) pal
+		// binary pal
 		if (palChoice == 1) {
 			if (!SpriteManipulator.testFileType(paletteName, "pal")) {
 				JOptionPane.showMessageDialog(frame,
