@@ -260,6 +260,7 @@ public class PNGto4BPP {
 
 		// save name button
 		final JButton saveNameBtn = new JButton("Save my name as defaults");
+		saveNameBtn.setFocusable(false);
 		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, saveNameBtn, 0,
 				SpringLayout.VERTICAL_CENTER, authNameLbl);
 		wrap.putConstraint(SpringLayout.WEST, saveNameBtn, 15,
@@ -268,6 +269,7 @@ public class PNGto4BPP {
 
 		// load name button
 		final JButton loadNameBtn = new JButton("Load my defaults");
+		loadNameBtn.setFocusable(false);
 		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 0,
 				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
 		wrap.putConstraint(SpringLayout.WEST, loadNameBtn, 0,
@@ -598,7 +600,7 @@ public class PNGto4BPP {
 			});
 	}
 
-// Summary
+	// Summary
 	// ProcessArgs checks if the arguments are valid, and if so, sets the TextFields and ComboBox with the values from the passed arguments.
 	// Returns True if arguments were processed successfully. False if not.
 	public static boolean ProcessArgs(String[] args) {
