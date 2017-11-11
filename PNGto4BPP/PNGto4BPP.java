@@ -42,7 +42,7 @@ import SpriteManipulator.*;
 // class
 public class PNGto4BPP {
 	// version number
-	static final String VERSION_TAG = "v1.4.0";
+	static final String VERSION_TAG = "v1.4";
 
 	// accepted extensions
 	static final String[] IMAGEEXTS = { "png" }; // image import types
