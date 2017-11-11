@@ -48,9 +48,9 @@ public class PNGto4BPP {
 	static final String[] IMAGEEXTS = { "png" }; // image import types
 	static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
 	static final String[] BINARYEXTS = { "pal" }; // binary palette import types
-	static final String[] SPREXTS = { "spr" }; // sprite file import types
+	static final String[] SPREXTS = { SPRFile.EXTENSION }; // sprite file import types
 	static final String[] ROMEXTS = { "sfc" }; // rom file import types
-	static final String[] EXPORTEXTS = { "spr", "sfc" }; // export types
+	static final String[] EXPORTEXTS = { SPRFile.EXTENSION, "sfc" }; // export types
 	static final String[] LOGEXTS = { "txt" }; // debug file types
 
 	//These fields are utilized by functions
@@ -535,10 +535,10 @@ public class PNGto4BPP {
 					if (!SpriteManipulator.testFileType(n,EXPORTEXTS)) {
 						// if invalid filetype
 						if(n.contains(".")) {
-							changeExtension(n,"spr");
+							changeExtension(n,SPRFile.EXTENSION);
 						} else {
-							// no filetype, append spr
-							n = n + ".spr";
+							// no filetype, append zspr
+							n = n + "." + SPRFile.EXTENSION;
 						}
 					}
 					fileName.setText(n);
@@ -682,9 +682,9 @@ public class PNGto4BPP {
 			argumentErrorsFound = true;
 		}
 
-		// If sprite target name is not set, use the img source name with .spr extension.
+		// If sprite target name is not set, use the img source name with .zspr extension.
 		if(sprTarget == "") {
-			sprTarget = changeExtension(imgSrc, "spr");
+			sprTarget = changeExtension(imgSrc, SPRFile.EXTENSION);
 			fileName.setText(sprTarget);
 		}
 
@@ -707,13 +707,13 @@ public class PNGto4BPP {
 		return !argumentErrorsFound;
 	}
 
-	public static void UpdateRom(String sprTarget, String romTarget) throws IOException, FileNotFoundException {
+	public static void UpdateRom(String sprTarget, String romTarget)
+			throws IOException, FileNotFoundException {
+		byte[] spriteData = new byte[0x7078];
 
-		byte[] sprite_data = new byte[0x7078];
-
-		// filestream open .spr file
+		// filestream open .zspr file
 		FileInputStream fsInput = new FileInputStream(sprTarget);
-		fsInput.read(sprite_data);
+		fsInput.read(spriteData);
 		fsInput.close();
 		//SpriteManipulator.patchRom(sprite_data, romTarget);
 	}
@@ -796,7 +796,7 @@ public class PNGto4BPP {
 				loc = "oops";
 			} finally {
 				// still add extension here so that the user isn't fooled into thinking they need this field
-				loc += " (exported).spr";
+				loc += " (exported)." + SPRFile.EXTENSION;
 			}
 		}
 
@@ -815,7 +815,7 @@ public class PNGto4BPP {
 								JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
 			} else {
-				loc = loc + ".spr";
+				loc = loc + "." + SPRFile.EXTENSION;
 			}
 		}
 
@@ -962,7 +962,7 @@ public class PNGto4BPP {
 		String rName = authNameROM.getText();
 		newSPR.setAuthorNameROM(rName); // if it's blank, SPRFile class handles it
 
-		// write data to SPR file
+		// write data to ZSPR file
 		try {
 			if (patchingROM) {
 				SpriteManipulator.patchRom(loc, newSPR);
@@ -977,9 +977,9 @@ public class PNGto4BPP {
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
-		} catch (NotSPRException e) {
+		} catch (NotZSPRException e) {
 			JOptionPane.showMessageDialog(frame,
-					"File is not SPR file",
+					"File is not a " + SPRFile.EXTENSION + " file",
 					"Not my job",
 					JOptionPane.WARNING_MESSAGE);
 			return false;
