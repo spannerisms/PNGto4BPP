@@ -82,7 +82,7 @@ public class PNGto4BPP {
 	static String MY_NAME_PATH = MY_NAME_SHORT;
 
 	// this is actually getting kinda annoying to see all the time
-	static boolean showSuccess = true;
+	static boolean ignoreSuccess = false;
 
 	// Summary
 	// Command line usage:
@@ -566,13 +566,13 @@ public class PNGto4BPP {
 		// success toggle
 		showSucc.addChangeListener(
 				arg -> {
-					showSuccess = showSucc.isSelected();
+					ignoreSuccess = !showSucc.isSelected();
 				});
 
 		// run button
 		runBtn.addActionListener(
 				arg0 -> {
-					convertPngToSprite(showSuccess);
+					convertPngToSprite(ignoreSuccess);
 				});
 
 		// save name to txt file
@@ -782,7 +782,7 @@ public class PNGto4BPP {
 		// test image type
 		if (!SpriteManipulator.testFileType(imgName, IMAGEEXTS)) {
 			JOptionPane.showMessageDialog(frame,
-					"Images must be of the following extensions:\n" +
+					"Images must be of the following extensions:\n\t" +
 							String.join(", ", IMAGEEXTS),
 					"Good job",
 					JOptionPane.WARNING_MESSAGE);
@@ -793,14 +793,14 @@ public class PNGto4BPP {
 		if (!SpriteManipulator.testFileType(paletteName, PALETTEEXTS) && (palChoice != 2)) {
 			if(paletteName.length() == 0) {
 				JOptionPane.showMessageDialog(frame,
-						"No Palette source was specified despite using a palette method that requires it",
+						"No palette source was specified despite using a palette method that requires it",
 						"Oops",
 						JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
 			}
 			else {
 				JOptionPane.showMessageDialog(frame,
-						"Palettes must be of the following extensions:\n" +
+						"Palettes must be one of the following types:\n\t" +
 								String.join(", ", PALETTEEXTS),
 						"HEY! LISTEN!",
 						JOptionPane.WARNING_MESSAGE);
@@ -833,7 +833,7 @@ public class PNGto4BPP {
 		if (!SpriteManipulator.testFileType(loc, EXPORTEXTS)) {
 			if(loc.contains(".")) {
 				JOptionPane.showMessageDialog(frame,
-						"Export location must be of the following extensions:\n" +
+						"Export location must be one of the following types:\n\t" +
 								String.join(", ", EXPORTEXTS),
 								"C'mon",
 								JOptionPane.WARNING_MESSAGE);
@@ -930,7 +930,7 @@ public class PNGto4BPP {
 		if (palChoice == 1) {
 			if (!SpriteManipulator.testFileType(paletteName, "pal")) {
 				JOptionPane.showMessageDialog(frame,
-						"Binary palette reading must by a .PAL file",
+						"Binary palette reading must use a .PAL file",
 						"Gosh dernit",
 						JOptionPane.WARNING_MESSAGE);
 				return false;
@@ -1006,12 +1006,14 @@ public class PNGto4BPP {
 					"File is not a " + ZSPRFile.EXTENSION + " file",
 					"Not my job",
 					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace(debugWriter);
 			return false;
 		} catch (BadChecksumException e) {
 			JOptionPane.showMessageDialog(frame,
 					"Bad checksum; file may be corrupted",
 					"Invalid",
 					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace(debugWriter);
 			return false;
 		}
 
