@@ -782,7 +782,7 @@ public class PNGto4BPP {
 		// test image type
 		if (!SpriteManipulator.testFileType(imgName, IMAGEEXTS)) {
 			JOptionPane.showMessageDialog(frame,
-					"Images must be of the following extensions:\n\t" +
+					"Images must be one of the following types:\n" +
 							String.join(", ", IMAGEEXTS),
 					"Good job",
 					JOptionPane.WARNING_MESSAGE);
@@ -800,7 +800,7 @@ public class PNGto4BPP {
 			}
 			else {
 				JOptionPane.showMessageDialog(frame,
-						"Palettes must be one of the following types:\n\t" +
+						"Palettes must be one of the following types:\n" +
 								String.join(", ", PALETTEEXTS),
 						"HEY! LISTEN!",
 						JOptionPane.WARNING_MESSAGE);
@@ -833,7 +833,7 @@ public class PNGto4BPP {
 		if (!SpriteManipulator.testFileType(loc, EXPORTEXTS)) {
 			if(loc.contains(".")) {
 				JOptionPane.showMessageDialog(frame,
-						"Export location must be one of the following types:\n\t" +
+						"Export location must be one of the following types:\n" +
 								String.join(", ", EXPORTEXTS),
 								"C'mon",
 								JOptionPane.WARNING_MESSAGE);
@@ -1068,6 +1068,7 @@ public class PNGto4BPP {
 			authNameROM.setText(authSplit[1]);
 		}
 	}
+
 	/**
 	 * Reads a GIMP ({@code .gpl}) or Graphics Gale ({@code .pal}) palette file for colors.
 	 * <br><br>
@@ -1282,8 +1283,8 @@ public class PNGto4BPP {
 
 		return ret;
 	}
-	// errors
 
+	// errors
 	/**
 	 * Palette has <16 colors
 	 */
