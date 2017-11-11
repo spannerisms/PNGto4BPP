@@ -48,9 +48,9 @@ public class PNGto4BPP {
 	static final String[] IMAGEEXTS = { "png" }; // image import types
 	static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
 	static final String[] BINARYEXTS = { "pal" }; // binary palette import types
-	static final String[] SPREXTS = { SPRFile.EXTENSION }; // sprite file import types
+	static final String[] SPREXTS = { ZSPRFile.EXTENSION }; // sprite file import types
 	static final String[] ROMEXTS = { "sfc" }; // rom file import types
-	static final String[] EXPORTEXTS = { SPRFile.EXTENSION, "sfc" }; // export types
+	static final String[] EXPORTEXTS = { ZSPRFile.EXTENSION, "sfc" }; // export types
 	static final String[] LOGEXTS = { "txt" }; // debug file types
 
 	//These fields are utilized by functions
@@ -535,10 +535,10 @@ public class PNGto4BPP {
 					if (!SpriteManipulator.testFileType(n,EXPORTEXTS)) {
 						// if invalid filetype
 						if(n.contains(".")) {
-							changeExtension(n,SPRFile.EXTENSION);
+							changeExtension(n, ZSPRFile.EXTENSION);
 						} else {
 							// no filetype, append zspr
-							n = n + "." + SPRFile.EXTENSION;
+							n = n + "." + ZSPRFile.EXTENSION;
 						}
 					}
 					fileName.setText(n);
@@ -684,7 +684,7 @@ public class PNGto4BPP {
 
 		// If sprite target name is not set, use the img source name with .zspr extension.
 		if(sprTarget == "") {
-			sprTarget = changeExtension(imgSrc, SPRFile.EXTENSION);
+			sprTarget = changeExtension(imgSrc, ZSPRFile.EXTENSION);
 			fileName.setText(sprTarget);
 		}
 
@@ -796,7 +796,7 @@ public class PNGto4BPP {
 				loc = "oops";
 			} finally {
 				// still add extension here so that the user isn't fooled into thinking they need this field
-				loc += " (exported)." + SPRFile.EXTENSION;
+				loc += " (exported)." + ZSPRFile.EXTENSION;
 			}
 		}
 
@@ -815,7 +815,7 @@ public class PNGto4BPP {
 								JOptionPane.WARNING_MESSAGE);
 				extensionERR = true;
 			} else {
-				loc = loc + "." + SPRFile.EXTENSION;
+				loc = loc + "." + ZSPRFile.EXTENSION;
 			}
 		}
 
@@ -944,7 +944,7 @@ public class PNGto4BPP {
 		eightbyeight = SpriteManipulator.indexAnd8x8(pixels, palette);
 		glovesData = SpriteManipulator.getGlovesDataFromArray(palette);
 		byte[] sprData = SpriteManipulator.export8x8ToSPR(eightbyeight);
-		SPRFile newSPR = new SPRFile(sprData, palData, glovesData);
+		ZSPRFile newSPR = new ZSPRFile(sprData, palData, glovesData);
 
 		// add sprite name
 		String sName = sprName.getText();
@@ -960,7 +960,7 @@ public class PNGto4BPP {
 
 		// set author name rom
 		String rName = authNameROM.getText();
-		newSPR.setAuthorNameROM(rName); // if it's blank, SPRFile class handles it
+		newSPR.setAuthorNameROM(rName); // if it's blank, ZSPRFile class handles it
 
 		// write data to ZSPR file
 		try {
@@ -979,7 +979,7 @@ public class PNGto4BPP {
 			return false;
 		} catch (NotZSPRException e) {
 			JOptionPane.showMessageDialog(frame,
-					"File is not a " + SPRFile.EXTENSION + " file",
+					"File is not a " + ZSPRFile.EXTENSION + " file",
 					"Not my job",
 					JOptionPane.WARNING_MESSAGE);
 			return false;
