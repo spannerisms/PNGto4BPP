@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -80,6 +81,9 @@ public class PNGto4BPP {
 	static final String MY_NAME_SHORT = "myname.txt";
 	static String MY_NAME_PATH = MY_NAME_SHORT;
 
+	// this is actually getting kinda annoying to see all the time
+	static boolean showSuccess = true;
+
 	// Summary
 	// Command line usage:
 	// imgSrc: Full path for image
@@ -127,19 +131,21 @@ public class PNGto4BPP {
 
 		// window building
 		final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
-		final JDialog debugFrame = new JDialog(frame, "Debug");
-		final JDialog aboutFrame = new JDialog(frame, "About");
+
+		// dimensions used
 		final Dimension d = new Dimension(600,282);
 		final Dimension d2 = new Dimension(600,600);
 		final Dimension textFieldD = new Dimension(250, 20);
-		final TextArea debugLog = new TextArea("Debug log:",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
-		debugLog.setEditable(false);
+
+		// main layout wrapper
 		final Container fullWrap = new Container();
 		final Container frameWrap = frame.getContentPane();
 		fullWrap.setLayout(new GridBagLayout());
 		SpringLayout wrap = new SpringLayout();
 		frameWrap.setLayout(wrap);
 		frameWrap.setPreferredSize(d);
+
+		// main utility
 		GridBagConstraints w = new GridBagConstraints();
 		w.fill = GridBagConstraints.HORIZONTAL;
 
@@ -177,10 +183,16 @@ public class PNGto4BPP {
 
 		// convert
 		final JButton runBtn = new JButton("Convert");
+		final JCheckBox showSucc = new JCheckBox("Show success dialog");
+		showSucc.setSelected(true);
+		showSucc.setFocusable(false);
 		w.gridy++;
 		w.gridx = 0;
-		w.gridwidth = 3;
+		w.gridwidth = 2;
 		fullWrap.add(runBtn, w);
+		w.gridx = 2;
+		w.gridwidth = 1;
+		fullWrap.add(showSucc, w);
 
 		// container layering
 		wrap.putConstraint(SpringLayout.NORTH, fullWrap, 5,
@@ -279,6 +291,7 @@ public class PNGto4BPP {
 		frameWrap.add(loadNameBtn);
 
 		// Acknowledgments
+		final JDialog aboutFrame = new JDialog(frame, "About");
 		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		peepsList.setEditable(false);
 		peepsList.append("Written by fatmanspanda"); // hey, that's me
@@ -311,6 +324,9 @@ public class PNGto4BPP {
 		aboutFrame.add(peepsList);
 
 		// debug text
+		final JDialog debugFrame = new JDialog(frame, "Debug");
+		final TextArea debugLog = new TextArea("Debug log:",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		debugLog.setEditable(false);
 		final JPanel debugWrapper = new JPanel(new BorderLayout());
 		final JButton clrLog = new JButton("Clear");
 		final JButton expLog = new JButton("Export");
@@ -547,10 +563,16 @@ public class PNGto4BPP {
 				}
 			});
 
+		// success toggle
+		showSucc.addChangeListener(
+				arg -> {
+					showSuccess = showSucc.isSelected();
+				});
+
 		// run button
 		runBtn.addActionListener(
 				arg0 -> {
-					convertPngToSprite(false);
+					convertPngToSprite(showSuccess);
 				});
 
 		// save name to txt file
