@@ -71,7 +71,7 @@ public class PNGto4BPP {
 				"Binary (.PAL)",
 				"Extract from last block of PNG"
 				};
-	static final JComboBox<String>	palOptions = new JComboBox<String>(palChoices);
+	static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
 	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 
 	static StringWriter debugLogging;
@@ -1001,19 +1001,11 @@ public class PNGto4BPP {
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
 			return false;
-		} catch (NotZSPRException e) {
+		}  catch (ZSPRFormatException e) {
 			JOptionPane.showMessageDialog(frame,
-					"File is not a " + ZSPRFile.EXTENSION + " file",
-					"Not my job",
+					e.getMessage(),
+					"PROBLEM",
 					JOptionPane.WARNING_MESSAGE);
-			e.printStackTrace(debugWriter);
-			return false;
-		} catch (BadChecksumException e) {
-			JOptionPane.showMessageDialog(frame,
-					"Bad checksum; file may be corrupted",
-					"Invalid",
-					JOptionPane.WARNING_MESSAGE);
-			e.printStackTrace(debugWriter);
 			return false;
 		}
 
