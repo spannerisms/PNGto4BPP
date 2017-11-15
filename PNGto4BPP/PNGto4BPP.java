@@ -342,7 +342,7 @@ public class PNGto4BPP {
 		final JMenu fileMenu = new JMenu("File");
 		final JMenuItem debug = new JMenuItem("Debug");
 		ImageIcon bee = new ImageIcon(
-				PNGto4BPP.class.getResource("images/bee.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/images/bee.png")
 			);
 		debug.setIcon(bee);
 		fileMenu.add(debug);
@@ -350,7 +350,7 @@ public class PNGto4BPP {
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				PNGto4BPP.class.getResource("images/mirror.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/images/mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -365,7 +365,7 @@ public class PNGto4BPP {
 		// Acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
 		ImageIcon mapIcon = new ImageIcon(
-				PNGto4BPP.class.getResource("images/map.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/images/map.png")
 			);
 		peeps.setIcon(mapIcon);
 		helpMenu.add(peeps);
@@ -406,7 +406,7 @@ public class PNGto4BPP {
 
 		// ico
 		final ImageIcon ico = new ImageIcon(
-				PNGto4BPP.class.getResource("images/ico.png")
+				PNGto4BPP.class.getResource("/PNGto4BPP/images/ico.png")
 			);
 		frame.setIconImage(ico.getImage());
 		debugFrame.setIconImage(ico.getImage());
