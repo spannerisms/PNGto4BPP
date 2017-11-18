@@ -44,16 +44,16 @@ import SpriteManipulator.*;
 
 public class PNGto4BPP {
 	// version number
-	static final String VERSION_TAG = "v1.5";
+	private static final String VERSION_TAG = "v1.5";
 
 	// accepted extensions
-	static final String[] IMAGEEXTS = { "png" }; // image import types
-	static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
-	static final String[] BINARYEXTS = { "pal" }; // binary palette import types
-	static final String[] SPREXTS = { ZSPRFile.EXTENSION }; // sprite file import types
-	static final String[] ROMEXTS = { "sfc" }; // rom file import types
-	static final String[] EXPORTEXTS = { ZSPRFile.EXTENSION, "sfc" }; // export types
-	static final String[] LOGEXTS = { "txt" }; // debug file types
+	private static final String[] IMAGEEXTS = { "png" }; // image import types
+	private static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
+	private static final String[] BINARYEXTS = { "pal" }; // binary palette import types
+	private static final String[] SPREXTS = { ZSPRFile.EXTENSION }; // sprite file import types
+	private static final String[] ROMEXTS = { "sfc" }; // rom file import types
+	private static final String[] EXPORTEXTS = { ZSPRFile.EXTENSION, "sfc" }; // export types
+	private static final String[] LOGEXTS = { "txt" }; // debug file types
 
 	// Set theme here so the static ones can look good
 	static {
@@ -77,11 +77,9 @@ public class PNGto4BPP {
 	}
 
 	// wiki link
-	static final String WIKI_LINK = "https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP";
-	static final JTextField wikiPath = new JTextField(WIKI_LINK);
-	static final JPanel wikiWarn = new JPanel(new BorderLayout());
-	static final JLabel wikiWarnText = new JLabel("<html>There was a problem opening your browser.<br>" + 
-			"The wiki can be accessed from the following URL:</html>");
+	private static final String WIKI_LINK = "https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP";
+	private static final JTextField wikiPath = new JTextField(WIKI_LINK);
+	private static final JPanel wikiWarn = new JPanel(new BorderLayout());
 	static {
 		wikiWarn.add(new JLabel("There was a problem opening your browser."), BorderLayout.NORTH);
 		wikiWarn.add(new JLabel("The wiki can be accessed from the following URL:"), BorderLayout.CENTER);
@@ -89,34 +87,34 @@ public class PNGto4BPP {
 	}
 
 	// These fields are utilized by static functions
-	static final JTextField imageName = new JTextField("");
-	static final JTextField palName = new JTextField("");
-	static final JTextField fileName = new JTextField("");
-	static final JFormattedTextField sprName = new JFormattedTextField();
-	static final JFormattedTextField authName = new JFormattedTextField();
-	static final JFormattedTextField authNameROM = new JFormattedTextField();
+	private static final JTextField imageName = new JTextField("");
+	private static final JTextField palName = new JTextField("");
+	private static final JTextField fileName = new JTextField("");
+	private static final JFormattedTextField sprName = new JFormattedTextField();
+	private static final JFormattedTextField authName = new JFormattedTextField();
+	private static final JFormattedTextField authNameROM = new JFormattedTextField();
 
 	// offsets used by palette trickery to store gloves colors
-	static int[] GLOVE_PAL_INDICES = new int[] { 16, 32 };
+	private static int[] GLOVE_PAL_INDICES = new int[] { 16, 32 };
 
 	// palette reading methods
-	static String[] palChoices = {
+	private static String[] palChoices = {
 				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
 				"Binary (.PAL)",
 				"Extract from last block of PNG"
 				};
-	static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
-	static final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
+	private static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
+	private static final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 
-	static StringWriter debugLogging;
-	static PrintWriter debugWriter;
+	private static StringWriter debugLogging;
+	private static PrintWriter debugWriter;
 
 	// MY_NAME_SHORT will never change; the path will
-	static final String MY_NAME_SHORT = "myname.txt";
-	static String MY_NAME_PATH = MY_NAME_SHORT;
+	private static final String MY_NAME_SHORT = "myname.txt";
+	private static String MY_NAME_PATH = MY_NAME_SHORT;
 
 	// this is actually getting kinda annoying to see all the time
-	static boolean ignoreSuccess = false;
+	private static boolean ignoreSuccess = false;
 
 	// Summary
 	// Command line usage:
