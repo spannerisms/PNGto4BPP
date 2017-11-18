@@ -2,6 +2,7 @@ package PNGto4BPP;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -40,10 +42,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.FileInputStream;
 import SpriteManipulator.*;
 
-// class
 public class PNGto4BPP {
 	// version number
-	static final String VERSION_TAG = "v1.4";
+	static final String VERSION_TAG = "v1.5";
 
 	// accepted extensions
 	static final String[] IMAGEEXTS = { "png" }; // image import types
@@ -54,7 +55,28 @@ public class PNGto4BPP {
 	static final String[] EXPORTEXTS = { ZSPRFile.EXTENSION, "sfc" }; // export types
 	static final String[] LOGEXTS = { "txt" }; // debug file types
 
-	//These fields are utilized by functions
+	// Set theme here so the static ones can look good
+	static {
+		// try to set metal
+		try {
+			UIManager.setLookAndFeel("metal");
+		} catch (UnsupportedLookAndFeelException
+				| ClassNotFoundException
+				| InstantiationException
+				| IllegalAccessException e) {
+			// try to set System default
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (UnsupportedLookAndFeelException
+					| ClassNotFoundException
+					| InstantiationException
+					| IllegalAccessException e2) {
+					// do nothing
+			} //end System
+		} // end metal
+	}
+
+	// These fields are utilized by static functions
 	static final JTextField imageName = new JTextField("");
 	static final JTextField palName = new JTextField("");
 	static final JTextField fileName = new JTextField("");
@@ -111,31 +133,13 @@ public class PNGto4BPP {
 			// do nothing
 		}
 
-		// try to set metal
-		try {
-			UIManager.setLookAndFeel("metal");
-		} catch (UnsupportedLookAndFeelException
-				| ClassNotFoundException
-				| InstantiationException
-				| IllegalAccessException e) {
-			// try to set System default
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (UnsupportedLookAndFeelException
-					| ClassNotFoundException
-					| InstantiationException
-					| IllegalAccessException e2) {
-					// do nothing
-			} //end System
-		} // end metal
-
 		// window building
 		final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
 
 		// dimensions used
 		final Dimension d = new Dimension(600,282);
 		final Dimension d2 = new Dimension(600,600);
-		final Dimension textFieldD = new Dimension(250, 20);
+		final Dimension textFieldD = new Dimension(270, 20);
 
 		// main layout wrapper
 		final Container fullWrap = new Container();
@@ -148,10 +152,11 @@ public class PNGto4BPP {
 		// main utility
 		GridBagConstraints w = new GridBagConstraints();
 		w.fill = GridBagConstraints.HORIZONTAL;
+		w.gridy = -1;
 
 		// image name
 		final JButton imageBtn = new JButton("Load PNG");
-		w.gridy = 0;
+		w.gridy++;
 		w.gridx = 0;
 		w.gridwidth = 2;
 		fullWrap.add(imageName, w);
@@ -216,14 +221,14 @@ public class PNGto4BPP {
 
 		// Sprite name
 		final JLabel sprNameLbl = new JLabel("Sprite name", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.NORTH, sprNameLbl, 10,
-				SpringLayout.SOUTH, metaLbl);
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, sprNameLbl, -1,
+				SpringLayout.VERTICAL_CENTER, sprName);
 		wrap.putConstraint(SpringLayout.WEST, sprNameLbl, 15,
 				SpringLayout.WEST, frame);
 		frameWrap.add(sprNameLbl);
 
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, sprName, 0,
-				SpringLayout.VERTICAL_CENTER, sprNameLbl);
+		wrap.putConstraint(SpringLayout.NORTH, sprName, 7,
+				SpringLayout.SOUTH, metaLbl);
 		wrap.putConstraint(SpringLayout.EAST, sprName, 0,
 				SpringLayout.HORIZONTAL_CENTER, frame);
 		wrap.putConstraint(SpringLayout.WEST, sprName, 4,
@@ -232,40 +237,40 @@ public class PNGto4BPP {
 
 		// Author name
 		final JLabel authNameLbl = new JLabel("Your name", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.NORTH, authNameLbl, 15,
-				SpringLayout.SOUTH, sprName);
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameLbl, -1,
+				SpringLayout.VERTICAL_CENTER, authName);
 		wrap.putConstraint(SpringLayout.EAST, authNameLbl, 0,
 				SpringLayout.EAST, sprNameLbl);
-		wrap.putConstraint(SpringLayout.WEST, authNameLbl, 15,
-				SpringLayout.WEST, frame);
+		wrap.putConstraint(SpringLayout.WEST, authNameLbl, 0,
+				SpringLayout.WEST, sprNameLbl);
 		frameWrap.add(authNameLbl);
 
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authName, 0,
-				SpringLayout.VERTICAL_CENTER, authNameLbl);
+		wrap.putConstraint(SpringLayout.NORTH, authName, 7,
+				SpringLayout.SOUTH, sprName);
 		wrap.putConstraint(SpringLayout.EAST, authName, 0,
-				SpringLayout.HORIZONTAL_CENTER, frame);
+				SpringLayout.EAST, sprName);
 		wrap.putConstraint(SpringLayout.WEST, authName, 4,
-				SpringLayout.EAST, authNameLbl);
+				SpringLayout.WEST, sprName);
 		wrap.putConstraint(SpringLayout.WEST, authName, 0,
 				SpringLayout.WEST, sprName);
 		frameWrap.add(authName);
 
 		// Author name in ROM
 		final JLabel authNameROMLbl = new JLabel("<html>Your name<br>(but short)</html>", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.NORTH, authNameROMLbl, 10,
-				SpringLayout.SOUTH, authNameLbl);
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameROMLbl, 0,
+				SpringLayout.VERTICAL_CENTER, authNameROM);
 		wrap.putConstraint(SpringLayout.EAST, authNameROMLbl, 0,
 				SpringLayout.EAST, sprNameLbl);
-		wrap.putConstraint(SpringLayout.WEST, authNameROMLbl, 15,
-				SpringLayout.WEST, frame);
+		wrap.putConstraint(SpringLayout.WEST, authNameROMLbl, 0,
+				SpringLayout.WEST, sprNameLbl);
 		frameWrap.add(authNameROMLbl);
 
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameROM, 0,
-				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
+		wrap.putConstraint(SpringLayout.NORTH, authNameROM, 7,
+				SpringLayout.SOUTH, authName);
 		wrap.putConstraint(SpringLayout.EAST, authNameROM, 0,
-				SpringLayout.HORIZONTAL_CENTER, authName);
+				SpringLayout.EAST, sprName);
 		wrap.putConstraint(SpringLayout.WEST, authNameROM, 4,
-				SpringLayout.EAST, authNameROMLbl);
+				SpringLayout.WEST, sprName);
 		wrap.putConstraint(SpringLayout.WEST, authNameROM, 0,
 				SpringLayout.WEST, sprName);
 		frameWrap.add(authNameROM);
@@ -273,8 +278,8 @@ public class PNGto4BPP {
 		// save name button
 		final JButton saveNameBtn = new JButton("Save my name as defaults");
 		saveNameBtn.setFocusable(false);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, saveNameBtn, 0,
-				SpringLayout.VERTICAL_CENTER, authNameLbl);
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, saveNameBtn, 1,
+				SpringLayout.VERTICAL_CENTER, authName);
 		wrap.putConstraint(SpringLayout.WEST, saveNameBtn, 15,
 				SpringLayout.EAST, authName);
 		frameWrap.add(saveNameBtn);
@@ -282,8 +287,8 @@ public class PNGto4BPP {
 		// load name button
 		final JButton loadNameBtn = new JButton("Load my defaults");
 		loadNameBtn.setFocusable(false);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 0,
-				SpringLayout.VERTICAL_CENTER, authNameROMLbl);
+		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 1,
+				SpringLayout.VERTICAL_CENTER, authNameROM);
 		wrap.putConstraint(SpringLayout.WEST, loadNameBtn, 0,
 				SpringLayout.WEST, saveNameBtn);
 		wrap.putConstraint(SpringLayout.EAST, loadNameBtn, 0,
@@ -339,7 +344,13 @@ public class PNGto4BPP {
 
 		// menu
 		final JMenuBar menu = new JMenuBar();
+		frame.setJMenuBar(menu);
+
+		// file menu
 		final JMenu fileMenu = new JMenu("File");
+		menu.add(fileMenu);
+
+		// debug
 		final JMenuItem debug = new JMenuItem("Debug");
 		ImageIcon bee = new ImageIcon(
 				PNGto4BPP.class.getResource("/PNGto4BPP/images/bee.png")
@@ -353,16 +364,24 @@ public class PNGto4BPP {
 				PNGto4BPP.class.getResource("/PNGto4BPP/images/mirror.png")
 			);
 		exit.setIcon(mirror);
-		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
+		fileMenu.add(exit);
 
-		menu.add(fileMenu);
 		// end file menu
 
 		// help menu
 		final JMenu helpMenu = new JMenu("Help");
+		menu.add(helpMenu);
 
-		// Acknowledgements
+		// wiki link
+		final JMenuItem wiki = new JMenuItem("Open wiki");
+		ImageIcon pearlIcon = new ImageIcon(
+				PNGto4BPP.class.getResource("/PNGto4BPP/images/pearl.png")
+			);
+		wiki.setIcon(pearlIcon);
+		helpMenu.add(wiki);
+
+		// acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
 		ImageIcon mapIcon = new ImageIcon(
 				PNGto4BPP.class.getResource("/PNGto4BPP/images/map.png")
@@ -370,10 +389,7 @@ public class PNGto4BPP {
 		peeps.setIcon(mapIcon);
 		helpMenu.add(peeps);
 
-		menu.add(helpMenu);
 		// end help menu
-
-		frame.setJMenuBar(menu);
 
 		// file explorer
 		final BetterJFileChooser explorer = new BetterJFileChooser();
@@ -483,6 +499,25 @@ public class PNGto4BPP {
 						"YAY",
 						JOptionPane.PLAIN_MESSAGE);
 			});
+
+		// open wiki button
+		wiki.addActionListener(
+				arg0 -> {
+					URL aa;
+					try {
+						aa = new URL("https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP");
+						Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+						if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+								desktop.browse(aa.toURI());
+						}
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frame,
+								"There was a problem opening your browser.",
+								"Houston, we have a problem.",
+								JOptionPane.WARNING_MESSAGE);
+						e.printStackTrace(debugWriter);
+					}
+				});
 
 		// image button
 		imageBtn.addActionListener(
@@ -873,9 +908,9 @@ public class PNGto4BPP {
 		// image raster
 		try {
 			pixels = getImageRaster(img);
-		} catch (BadDimensionsException e) {
+		} catch (PNGException e) {
 			JOptionPane.showMessageDialog(frame,
-					"Image dimensions must be 128x448",
+					e.getMessage(),
 					"Puh-lease",
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace(debugWriter);
@@ -916,9 +951,9 @@ public class PNGto4BPP {
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace(debugWriter);
 				return false;
-			} catch (ShortPaletteException e) {
+			} catch (PNGException e) {
 				JOptionPane.showMessageDialog(frame,
-						"Unable to find 16 colors",
+						e.getMessage(),
 						"This one is YOUR fault",
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace(debugWriter);
@@ -1026,11 +1061,12 @@ public class PNGto4BPP {
 	 * @param img - image to read
 	 * @throws BadDimensionsException if the image is not 128 pixels wide and 448 pixels tall
 	 */
-	public static byte[] getImageRaster(BufferedImage img) throws BadDimensionsException {
+	public static byte[] getImageRaster(BufferedImage img) throws PNGException {
 		int w = img.getWidth();
 		int h = img.getHeight();
 		if (w != 128 || h != 448) {
-			throw new BadDimensionsException("Invalid dimensions of {" + w + "," + h + "}");
+			throw new PNGException("Invalid dimensions of {" + w + "," + h + "}" +
+					"Image dimensions must be 128x448");
 		}
 		return SpriteManipulator.getImageRaster(img);
 	}
@@ -1076,7 +1112,7 @@ public class PNGto4BPP {
 	 * @throws ShortPaletteException Halts the process if enough colors are not found.
 	 */
 	public static int[] getPaletteColorsFromFile(BufferedReader pal)
-			throws NumberFormatException, IOException, ShortPaletteException {
+			throws NumberFormatException, IOException, PNGException {
 		int[] ret = new int[64];
 		String line;
 
@@ -1115,7 +1151,8 @@ public class PNGto4BPP {
 		}
 		// short palettes throw an error
 		if (pali < 16 ) {
-			throw new ShortPaletteException("Only " + pali + " colors were found.");
+			throw new PNGException("Only " + pali + " colors were found.\n" +
+					"At least 16 colors are required.");
 		}
 		// truncate long palettes
 		int[] newret = new int[64];
@@ -1154,7 +1191,7 @@ public class PNGto4BPP {
 	 * @throws ShortPaletteException Halts the process if enough colors are not found.
 	 */
 	public static int[] getPaletteColorsFromPaintNET(BufferedReader pal)
-			throws NumberFormatException, IOException, ShortPaletteException {
+			throws NumberFormatException, IOException, PNGException {
 		int[] ret = new int[64];
 		String line;
 
@@ -1176,7 +1213,8 @@ public class PNGto4BPP {
 		}
 		// Paint.NET forces 96 colors, but put this here just in case
 		if (pali < 16 ) {
-			throw new ShortPaletteException("Only " + pali + " colors were found.");
+			throw new PNGException("Only " + pali + " colors were found.\n" +
+					"At least 16 colors are required.");
 		}
 		// truncate long palettes
 		int[] newret = new int[64];
@@ -1277,27 +1315,10 @@ public class PNGto4BPP {
 	}
 
 	// errors
-	/**
-	 * Palette has <16 colors
-	 */
 	@SuppressWarnings("serial")
-	public static class ShortPaletteException extends Exception {
-		public ShortPaletteException(String message) {
+	public static class PNGException extends Exception {
+		public PNGException(String message) {
 			super(message);
 		}
-
-		public ShortPaletteException() {}
-	}
-
-	/**
-	 * Image is wrong dimensions
-	 */
-	@SuppressWarnings("serial")
-	public static class BadDimensionsException extends Exception {
-		public BadDimensionsException(String message) {
-			super(message);
-		}
-
-		public BadDimensionsException() {}
 	}
 }
