@@ -76,6 +76,18 @@ public class PNGto4BPP {
 		} // end metal
 	}
 
+	// wiki link
+	static final String WIKI_LINK = "https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP";
+	static final JTextField wikiPath = new JTextField(WIKI_LINK);
+	static final JPanel wikiWarn = new JPanel(new BorderLayout());
+	static final JLabel wikiWarnText = new JLabel("<html>There was a problem opening your browser.<br>" + 
+			"The wiki can be accessed from the following URL:</html>");
+	static {
+		wikiWarn.add(new JLabel("There was a problem opening your browser."), BorderLayout.NORTH);
+		wikiWarn.add(new JLabel("The wiki can be accessed from the following URL:"), BorderLayout.CENTER);
+		wikiWarn.add(wikiPath, BorderLayout.SOUTH);
+	}
+
 	// These fields are utilized by static functions
 	static final JTextField imageName = new JTextField("");
 	static final JTextField palName = new JTextField("");
@@ -505,14 +517,14 @@ public class PNGto4BPP {
 				arg0 -> {
 					URL aa;
 					try {
-						aa = new URL("https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP");
+						aa = new URL(WIKI_LINK);
 						Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 						if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 								desktop.browse(aa.toURI());
 						}
-					} catch (Exception e) {
+					} catch (Exception e) {						
 						JOptionPane.showMessageDialog(frame,
-								"There was a problem opening your browser.",
+								wikiWarn,
 								"Houston, we have a problem.",
 								JOptionPane.WARNING_MESSAGE);
 						e.printStackTrace(debugWriter);
