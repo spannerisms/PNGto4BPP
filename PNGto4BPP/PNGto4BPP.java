@@ -57,23 +57,12 @@ public class PNGto4BPP {
 
 	// Set theme here so the static ones can look good
 	static {
-		// try to set metal
+		// try to set LaF
 		try {
-			UIManager.setLookAndFeel("metal");
-		} catch (UnsupportedLookAndFeelException
-				| ClassNotFoundException
-				| InstantiationException
-				| IllegalAccessException e) {
-			// try to set System default
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (UnsupportedLookAndFeelException
-					| ClassNotFoundException
-					| InstantiationException
-					| IllegalAccessException e2) {
-					// do nothing
-			} //end System
-		} // end metal
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e2) {
+				// do nothing
+		} //end System
 	}
 
 	// wiki link
