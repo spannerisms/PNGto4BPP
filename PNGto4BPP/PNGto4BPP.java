@@ -36,7 +36,6 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
@@ -1257,6 +1256,9 @@ public class PNGto4BPP {
 		int pali = 0;
 		int startAt = (128 * 448 - 8) - (128 * 7);
 		int endAt = startAt + (8 * 128);
+		byte b1 = pixels[startAt*4+1];
+		byte g1 = pixels[startAt*4+2];
+		byte r1 = pixels[startAt*4+3];
 		for (int i = startAt; i < endAt; i+= 128) {
 			for (int j = 0; j < 8; j++) {
 				int k = i + j;
@@ -1265,6 +1267,10 @@ public class PNGto4BPP {
 				int r = Byte.toUnsignedInt(pixels[k*4+3]);
 				ret[pali] = (1000000 * r) + (1000 * g) + b;
 				pali++;
+				// remove the 8x8 block by setting it to green mail trans
+				pixels[k*4+1] = b1;
+				pixels[k*4+1] = g1;
+				pixels[k*4+1] = r1;
 			}
 		}
 
