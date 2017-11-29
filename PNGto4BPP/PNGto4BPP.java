@@ -1269,8 +1269,8 @@ public class PNGto4BPP {
 				pali++;
 				// remove the 8x8 block by setting it to green mail trans
 				pixels[k*4+1] = b1;
-				pixels[k*4+1] = g1;
-				pixels[k*4+1] = r1;
+				pixels[k*4+2] = g1;
+				pixels[k*4+3] = r1;
 			}
 		}
 
