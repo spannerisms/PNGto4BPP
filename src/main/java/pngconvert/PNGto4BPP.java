@@ -41,6 +41,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.FileInputStream;
 import SpriteManipulator.*;
 
+import static javax.swing.SpringLayout.*;
+
 public class PNGto4BPP {
 	// version number
 	private static final String VERSION_TAG = "v1.5";
@@ -198,12 +200,9 @@ public class PNGto4BPP {
 		fullWrap.add(showSucc, w);
 
 		// container layering
-		wrap.putConstraint(SpringLayout.NORTH, fullWrap, 5,
-				SpringLayout.NORTH, frame);
-		wrap.putConstraint(SpringLayout.EAST, fullWrap, 0,
-				SpringLayout.EAST, frame);
-		wrap.putConstraint(SpringLayout.WEST, fullWrap, 0,
-				SpringLayout.WEST, frame);
+		wrap.putConstraint(NORTH, fullWrap, 5, NORTH, frame);
+		wrap.putConstraint(EAST, fullWrap, 0, EAST, frame);
+		wrap.putConstraint(WEST, fullWrap, 0, WEST, frame);
 		frameWrap.add(fullWrap);
 
 		// Sprite name
@@ -211,86 +210,60 @@ public class PNGto4BPP {
 				new JLabel("<html><span style=\"font-size:120%; text-decoration: underline;\">" +
 						"Edit sprite meta data</span></html>",
 						SwingConstants.LEFT);
-		wrap.putConstraint(SpringLayout.NORTH, metaLbl, 5,
-				SpringLayout.SOUTH, fullWrap);
-		wrap.putConstraint(SpringLayout.WEST, metaLbl, 5,
-				SpringLayout.WEST, frame);
+		wrap.putConstraint(NORTH, metaLbl, 5, SOUTH, fullWrap);
+		wrap.putConstraint(WEST, metaLbl, 5, WEST, frame);
 		frameWrap.add(metaLbl);
 
 		// Sprite name
 		final JLabel sprNameLbl = new JLabel("Sprite name", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, sprNameLbl, -1,
-				SpringLayout.VERTICAL_CENTER, sprName);
-		wrap.putConstraint(SpringLayout.WEST, sprNameLbl, 15,
-				SpringLayout.WEST, frame);
+		wrap.putConstraint(VERTICAL_CENTER, sprNameLbl, -1, VERTICAL_CENTER, sprName);
+		wrap.putConstraint(WEST, sprNameLbl, 15, WEST, frame);
 		frameWrap.add(sprNameLbl);
 
-		wrap.putConstraint(SpringLayout.NORTH, sprName, 7,
-				SpringLayout.SOUTH, metaLbl);
-		wrap.putConstraint(SpringLayout.EAST, sprName, 0,
-				SpringLayout.HORIZONTAL_CENTER, frame);
-		wrap.putConstraint(SpringLayout.WEST, sprName, 4,
-				SpringLayout.EAST, sprNameLbl);
+		wrap.putConstraint(NORTH, sprName, 7, SOUTH, metaLbl);
+		wrap.putConstraint(EAST, sprName, 0, HORIZONTAL_CENTER, frame);
+		wrap.putConstraint(WEST, sprName, 4, EAST, sprNameLbl);
 		frameWrap.add(sprName);
 
 		// Author name
 		final JLabel authNameLbl = new JLabel("Your name", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameLbl, -1,
-				SpringLayout.VERTICAL_CENTER, authName);
-		wrap.putConstraint(SpringLayout.EAST, authNameLbl, 0,
-				SpringLayout.EAST, sprNameLbl);
-		wrap.putConstraint(SpringLayout.WEST, authNameLbl, 0,
-				SpringLayout.WEST, sprNameLbl);
+		wrap.putConstraint(VERTICAL_CENTER, authNameLbl, -1, VERTICAL_CENTER, authName);
+		wrap.putConstraint(EAST, authNameLbl, 0, EAST, sprNameLbl);
+		wrap.putConstraint(WEST, authNameLbl, 0, WEST, sprNameLbl);
 		frameWrap.add(authNameLbl);
 
-		wrap.putConstraint(SpringLayout.NORTH, authName, 7,
-				SpringLayout.SOUTH, sprName);
-		wrap.putConstraint(SpringLayout.EAST, authName, 0,
-				SpringLayout.EAST, sprName);
-		wrap.putConstraint(SpringLayout.WEST, authName, 4,
-				SpringLayout.WEST, sprName);
-		wrap.putConstraint(SpringLayout.WEST, authName, 0,
-				SpringLayout.WEST, sprName);
+		wrap.putConstraint(NORTH, authName, 7, SOUTH, sprName);
+		wrap.putConstraint(EAST, authName, 0, EAST, sprName);
+		wrap.putConstraint(WEST, authName, 4, WEST, sprName);
+		wrap.putConstraint(WEST, authName, 0, WEST, sprName);
 		frameWrap.add(authName);
 
 		// Author name in ROM
 		final JLabel authNameROMLbl = new JLabel("<html>Your name<br>(but short)</html>", SwingConstants.RIGHT);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, authNameROMLbl, 0,
-				SpringLayout.VERTICAL_CENTER, authNameROM);
-		wrap.putConstraint(SpringLayout.EAST, authNameROMLbl, 0,
-				SpringLayout.EAST, sprNameLbl);
-		wrap.putConstraint(SpringLayout.WEST, authNameROMLbl, 0,
-				SpringLayout.WEST, sprNameLbl);
+		wrap.putConstraint(VERTICAL_CENTER, authNameROMLbl, 0, VERTICAL_CENTER, authNameROM);
+		wrap.putConstraint(EAST, authNameROMLbl, 0, EAST, sprNameLbl);
+		wrap.putConstraint(WEST, authNameROMLbl, 0, WEST, sprNameLbl);
 		frameWrap.add(authNameROMLbl);
 
-		wrap.putConstraint(SpringLayout.NORTH, authNameROM, 7,
-				SpringLayout.SOUTH, authName);
-		wrap.putConstraint(SpringLayout.EAST, authNameROM, 0,
-				SpringLayout.EAST, sprName);
-		wrap.putConstraint(SpringLayout.WEST, authNameROM, 4,
-				SpringLayout.WEST, sprName);
-		wrap.putConstraint(SpringLayout.WEST, authNameROM, 0,
-				SpringLayout.WEST, sprName);
+		wrap.putConstraint(NORTH, authNameROM, 7, SOUTH, authName);
+		wrap.putConstraint(EAST, authNameROM, 0, EAST, sprName);
+		wrap.putConstraint(WEST, authNameROM, 4, WEST, sprName);
+		wrap.putConstraint(WEST, authNameROM, 0, WEST, sprName);
 		frameWrap.add(authNameROM);
 
 		// save name button
 		final JButton saveNameBtn = new JButton("Save my name as defaults");
 		saveNameBtn.setFocusable(false);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, saveNameBtn, 1,
-				SpringLayout.VERTICAL_CENTER, authName);
-		wrap.putConstraint(SpringLayout.WEST, saveNameBtn, 15,
-				SpringLayout.EAST, authName);
+		wrap.putConstraint(VERTICAL_CENTER, saveNameBtn, 1, VERTICAL_CENTER, authName);
+		wrap.putConstraint(WEST, saveNameBtn, 15, EAST, authName);
 		frameWrap.add(saveNameBtn);
 
 		// load name button
 		final JButton loadNameBtn = new JButton("Load my defaults");
 		loadNameBtn.setFocusable(false);
-		wrap.putConstraint(SpringLayout.VERTICAL_CENTER, loadNameBtn, 1,
-				SpringLayout.VERTICAL_CENTER, authNameROM);
-		wrap.putConstraint(SpringLayout.WEST, loadNameBtn, 0,
-				SpringLayout.WEST, saveNameBtn);
-		wrap.putConstraint(SpringLayout.EAST, loadNameBtn, 0,
-				SpringLayout.EAST, saveNameBtn);
+		wrap.putConstraint(VERTICAL_CENTER, loadNameBtn, 1, VERTICAL_CENTER, authNameROM);
+		wrap.putConstraint(WEST, loadNameBtn, 0, WEST, saveNameBtn);
+		wrap.putConstraint(EAST, loadNameBtn, 0, EAST, saveNameBtn);
 		frameWrap.add(loadNameBtn);
 
 		// Acknowledgments
