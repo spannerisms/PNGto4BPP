@@ -39,7 +39,7 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.FileInputStream;
-import SpriteManipulator.*;
+import spritemanipulator.*;
 
 import static javax.swing.SpringLayout.*;
 
