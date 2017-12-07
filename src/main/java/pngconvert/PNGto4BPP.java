@@ -38,15 +38,11 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import java.io.FileInputStream;
 import spritemanipulator.*;
 
 import static javax.swing.SpringLayout.*;
 
 public class PNGto4BPP {
-	// version number
-	private static final String VERSION_TAG = "v1.5";
-
 	// accepted extensions
 	private static final String[] IMAGEEXTS = { "png" }; // image import types
 	private static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
@@ -94,7 +90,7 @@ public class PNGto4BPP {
 				"Extract from last block of PNG"
 				};
 	private static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
-	private static final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
+	private static final JFrame frame = new JFrame("PNGto4BPP " + SpriteManipulator.ALTTPNG_VERSION);
 
 	private static StringWriter debugLogging;
 	private static PrintWriter debugWriter;
@@ -134,7 +130,7 @@ public class PNGto4BPP {
 		}
 
 		// window building
-		final JFrame frame = new JFrame("PNGto4BPP " + VERSION_TAG);
+		final JFrame frame = new JFrame("PNGto4BPP " + SpriteManipulator.ALTTPNG_VERSION);
 
 		// dimensions used
 		final Dimension d = new Dimension(600,282);
@@ -451,9 +447,9 @@ public class PNGto4BPP {
 					}
 				}
 
-				PrintWriter logBugs;
-				try {
-					logBugs = new PrintWriter(n);
+				try (PrintWriter logBugs = new PrintWriter(n)){
+					logBugs.write(debugLogging.toString());
+					logBugs.close();
 				} catch (FileNotFoundException e) {
 					JOptionPane.showMessageDialog(frame,
 							"There was a problem writing to the log!",
@@ -462,8 +458,6 @@ public class PNGto4BPP {
 					e.printStackTrace(debugWriter);
 					return;
 				}
-				logBugs.write(debugLogging.toString());
-				logBugs.close();
 				JOptionPane.showMessageDialog(frame,
 						"Error log written to:\n" + n,
 						"YAY",
@@ -583,9 +577,9 @@ public class PNGto4BPP {
 		// save name to txt file
 		saveNameBtn.addActionListener(
 				arg0 -> {
-					PrintWriter s;
-					try {
-						s = new PrintWriter(MY_NAME_PATH);
+					try (PrintWriter s = new PrintWriter(MY_NAME_PATH)) {
+						s.write(authName.getText() + '\0' + authNameROM.getText());
+						s.close();
 					} catch (FileNotFoundException e) {
 						JOptionPane.showMessageDialog(frame,
 								"There was a problem creating this file",
@@ -594,8 +588,6 @@ public class PNGto4BPP {
 						return;
 					}
 
-					s.write(authName.getText() + '\0' + authNameROM.getText());
-					s.close();
 					JOptionPane.showMessageDialog(frame,
 							"Name defaults saved to:\n" +
 									"'" + MY_NAME_SHORT + "'" +
@@ -738,12 +730,12 @@ public class PNGto4BPP {
 
 	public static void UpdateRom(String sprTarget, String romTarget)
 			throws IOException, FileNotFoundException {
-		byte[] spriteData = new byte[0x7078];
+//		byte[] spriteData = new byte[0x7078];
 
 		// filestream open .zspr file
-		FileInputStream fsInput = new FileInputStream(sprTarget);
-		fsInput.read(spriteData);
-		fsInput.close();
+//		FileInputStream fsInput = new FileInputStream(sprTarget);
+//		fsInput.read(spriteData);
+//		fsInput.close();
 		//SpriteManipulator.patchRom(sprite_data, romTarget);
 	}
 
