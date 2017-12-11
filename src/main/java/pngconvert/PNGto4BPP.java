@@ -43,6 +43,9 @@ import spritemanipulator.*;
 import static javax.swing.SpringLayout.*;
 
 public class PNGto4BPP {
+	// version
+	public static final String VERSION = "v1.6";
+
 	// accepted extensions
 	private static final String[] IMAGEEXTS = { "png" }; // image import types
 	private static final String[] PALETTEEXTS = { "gpl", "pal", "txt" }; // ascii palette import types
@@ -63,7 +66,7 @@ public class PNGto4BPP {
 	}
 
 	// wiki link
-	private static final String WIKI_LINK = "https://github.com/fatmanspanda/ALttPNG/wiki/PNGto4BPP";
+	private static final String WIKI_LINK = "https://github.com/fatmanspanda/ALttPNG/wiki";
 	private static final JTextField wikiPath = new JTextField(WIKI_LINK);
 	private static final JPanel wikiWarn = new JPanel(new BorderLayout());
 	static {
@@ -264,8 +267,10 @@ public class PNGto4BPP {
 
 		// Acknowledgments
 		final JDialog aboutFrame = new JDialog(frame, "About");
-		final TextArea peepsList = new TextArea("", 0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		final TextArea peepsList = new TextArea("", 0, 0, TextArea.SCROLLBARS_VERTICAL_ONLY);
 		peepsList.setEditable(false);
+		peepsList.append(String.format("PNGto4BPP version %s\n", VERSION));
+		peepsList.append(String.format("ALttPNG version %s\n\n", SpriteManipulator.ALTTPNG_VERSION));
 		peepsList.append("Written by fatmanspanda"); // hey, that's me
 		peepsList.append("\n\nSpecial thanks:\nMikeTrethewey"); // forced me to do this and falls in every category
 		peepsList.append("\n\nCode contribution:\n");
