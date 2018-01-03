@@ -143,7 +143,7 @@ public class PNGto4BPP {
 		}
 
 		// window building
-		final JFrame frame = new JFrame("PNGto4BPP " + SpriteManipulator.ALTTPNG_VERSION);
+		final JFrame frame = new JFrame("PNGto4BPP " + VERSION);
 
 		// dimensions used
 		final Dimension d = new Dimension(600,282);
