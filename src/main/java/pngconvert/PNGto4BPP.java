@@ -61,7 +61,7 @@ public class PNGto4BPP {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e2) {
-				// do nothing
+			// do nothing
 		} //end System
 	}
 
@@ -286,28 +286,29 @@ public class PNGto4BPP {
 		peepsList.append("\n\nCode contribution:\n");
 		peepsList.append(String.join(", ",
 				new String[] {
-						"Zarby89", // a lot of conversion help
-						"Glan", // various optimizations and bitwise help
-						"CGG Zayik" // command line functions
+					"Zarby89", // a lot of conversion help
+					"Glan", // various optimizations and bitwise help
+					"CGG Zayik" // command line functions
 				}));
 		peepsList.append("\n\nTesting and feedback:\n");
 		peepsList.append(String.join(", ",
 				new String[] {
-						"CGG Zayik", // test sprite contributor
-						"Damon" // test sprite contributor
+					"CGG Zayik", // test sprite contributor
+					"Damon" // test sprite contributor
 				}));
 		peepsList.append("\n\nResources and development:\n");
 		peepsList.append(String.join(", ",
 				new String[] {
-						"Veetorp", // provided most valuable documentation
-						"Zarby89", // various documentation and answers
-						"Damon", // Paint.NET palettes
-						"Sosuke3" // various snes code answers
+					"Veetorp", // provided most valuable documentation
+					"Zarby89", // various documentation and answers
+					"Damon", // Paint.NET palettes
+					"Sosuke3" // various snes code answers
 				}));
 		peepsList.append("\n\nUpdates at:\n");
-		peepsList.append(String.join(", ", new String[] {
-						"http://github.com/fatmanspanda/ALttPNG/wiki"
-						}));
+		peepsList.append(String.join(", ",
+				new String[] {
+					"http://github.com/fatmanspanda/ALttPNG/wiki"
+				}));
 		aboutFrame.add(peepsList);
 
 		// debug text
@@ -382,8 +383,7 @@ public class PNGto4BPP {
 		FileNameExtensionFilter imgFilter =
 				new FileNameExtensionFilter("PNG files", IMAGEEXTS);
 		FileNameExtensionFilter palFilter =
-				new FileNameExtensionFilter("Palette files (" +String.join(", ",PALETTEEXTS) +")",
-						PALETTEEXTS);
+				new FileNameExtensionFilter("Palette files (" +String.join(", ",PALETTEEXTS) +")", PALETTEEXTS);
 		FileNameExtensionFilter binPalFilter =
 				new FileNameExtensionFilter("Binary palettes", BINARYEXTS);
 		FileNameExtensionFilter sprFilter =
@@ -403,9 +403,7 @@ public class PNGto4BPP {
 		frame.setLocation(200,200);
 
 		// ico
-		final ImageIcon ico = new ImageIcon(
-				PNGto4BPP.class.getResource("/images/ico.png")
-			);
+		final ImageIcon ico = new ImageIcon(PNGto4BPP.class.getResource("/images/ico.png"));
 		frame.setIconImage(ico.getImage());
 		debugFrame.setIconImage(ico.getImage());
 		aboutFrame.setIconImage(ico.getImage());
@@ -416,10 +414,7 @@ public class PNGto4BPP {
 		final File EEE = new File("");
 
 		// about
-		peeps.addActionListener(
-			arg0 -> {
-				aboutFrame.setVisible(true);
-			});
+		peeps.addActionListener(arg0 -> aboutFrame.setVisible(true));
 
 		// debug
 		debug.addActionListener(
@@ -481,22 +476,22 @@ public class PNGto4BPP {
 
 		// open wiki button
 		wiki.addActionListener(
-				arg0 -> {
-					URL aa;
-					try {
-						aa = new URL(WIKI_LINK);
-						Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-						if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-								desktop.browse(aa.toURI());
-						}
-					} catch (Exception e) {						
-						JOptionPane.showMessageDialog(frame,
-								wikiWarn,
-								"Houston, we have a problem.",
-								JOptionPane.WARNING_MESSAGE);
-						e.printStackTrace(debugWriter);
+			arg0 -> {
+				URL aa;
+				try {
+					aa = new URL(WIKI_LINK);
+					Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+					if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+							desktop.browse(aa.toURI());
 					}
-				});
+				} catch (Exception e) {						
+					JOptionPane.showMessageDialog(frame,
+							wikiWarn,
+							"Houston, we have a problem.",
+							JOptionPane.WARNING_MESSAGE);
+					e.printStackTrace(debugWriter);
+				}
+			});
 
 		// image button
 		imageBtn.addActionListener(
@@ -583,32 +578,29 @@ public class PNGto4BPP {
 				});
 
 		// run button
-		runBtn.addActionListener(
-				arg0 -> {
-					convertPngToSprite(ignoreSuccess);
-				});
+		runBtn.addActionListener(arg0 -> convertPngToSprite(ignoreSuccess));
 
 		// save name to txt file
 		saveNameBtn.addActionListener(
-				arg0 -> {
-					try (PrintWriter s = new PrintWriter(MY_NAME_PATH)) {
-						s.write(authName.getText() + '\0' + authNameROM.getText());
-						s.close();
-					} catch (FileNotFoundException e) {
-						JOptionPane.showMessageDialog(frame,
-								"There was a problem creating this file",
-								"Uhhhhhhhhhhhhhh",
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-
+			arg0 -> {
+				try (PrintWriter s = new PrintWriter(MY_NAME_PATH)) {
+					s.write(authName.getText() + '\0' + authNameROM.getText());
+					s.close();
+				} catch (FileNotFoundException e) {
 					JOptionPane.showMessageDialog(frame,
-							"Name defaults saved to:\n" +
-									"'" + MY_NAME_SHORT + "'" +
-								"\n\nKeep this file in the same directory as PNGto4BPP.jar",
-							"SUCCESSSSSSSSSSsssssssssssssss",
+							"There was a problem creating this file",
+							"Uhhhhhhhhhhhhhh",
 							JOptionPane.PLAIN_MESSAGE);
-				});
+					return;
+				}
+
+				JOptionPane.showMessageDialog(frame,
+					"Name defaults saved to:\n" +
+							"'" + MY_NAME_SHORT + "'" +
+						"\n\nKeep this file in the same directory as PNGto4BPP.jar",
+					"SUCCESSSSSSSSSSsssssssssssssss",
+				JOptionPane.PLAIN_MESSAGE);
+			});
 
 		// load default names
 		loadNameBtn.addActionListener(
@@ -637,9 +629,8 @@ public class PNGto4BPP {
 	// ProcessArgs checks if the arguments are valid, and if so, sets the TextFields and ComboBox with the values from the passed arguments.
 	// Returns True if arguments were processed successfully. False if not.
 	public static boolean ProcessArgs(String[] args) {
-		if(args.length < 2 || args.length > 5) {
-			return false;
-		}
+		if(args.length < 2 || args.length > 5) { return false; }
+
 		String imgSrc = "";
 		String palSrc = "";
 		String sprTarget = "";
@@ -776,11 +767,13 @@ public class PNGto4BPP {
 	public static boolean convertPngToSprite(boolean ignoreSuccessMessage) {
 		BufferedImage img;
 		BufferedImage imgRead;
+
 		byte[] pixels;
 		String imgName = imageName.getText();
 		String paletteName = palName.getText();
 		File imageFile = new File(imgName);
 		BufferedReader br;
+
 		int[] palette = null;
 		byte[] palData = null;
 		byte[] glovesData = null;
@@ -842,7 +835,7 @@ public class PNGto4BPP {
 
 		// only allow sprite/ROM files
 		if (!SpriteManipulator.testFileType(loc, EXPORTEXTS)) {
-			if(loc.contains(".")) {
+			if (loc.contains(".")) {
 				JOptionPane.showMessageDialog(frame,
 						"Export location must be one of the following types:\n" +
 								String.join(", ", EXPORTEXTS),
@@ -855,9 +848,7 @@ public class PNGto4BPP {
 		}
 
 		// break if any extension related errors
-		if (extensionERR) {
-			return false;
-		}
+		if (extensionERR) { return false; }
 
 		// image file
 		try {
@@ -920,7 +911,7 @@ public class PNGto4BPP {
 				}
 				palette = SpriteManipulator.roundPalette(palette);
 				palData = SpriteManipulator.getPalDataFromArray(palette);
-			} catch (NumberFormatException|IOException e) {
+			} catch (NumberFormatException | IOException e) {
 				JOptionPane.showMessageDialog(frame,
 						"Error reading palette",
 						"Uhhhhhhh",
