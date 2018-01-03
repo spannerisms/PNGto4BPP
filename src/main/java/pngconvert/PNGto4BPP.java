@@ -44,7 +44,7 @@ import static javax.swing.SpringLayout.*;
 
 public class PNGto4BPP {
 	// version
-	public static final String VERSION = "v1.6";
+	public static final String VERSION = "v1.7";
 
 	// accepted extensions
 	private static final String[] IMAGEEXTS = { "png" }; // image import types
@@ -87,12 +87,22 @@ public class PNGto4BPP {
 	private static int[] GLOVE_PAL_INDICES = new int[] { 16, 32 };
 
 	// palette reading methods
-	private static String[] palChoices = {
-				"Read ASCII (" + String.join(", ",PALETTEEXTS) +")",
-				"Binary (.PAL)",
-				"Extract from last block of PNG"
-				};
-	private static final JComboBox<String> palOptions = new JComboBox<String>(palChoices);
+	private static enum PalChoices {
+		BLOCK ("Extract from last block of PNG"),
+		ASCII ("Read ASCII (" + String.join(", ",PALETTEEXTS) +")"),
+		BIN ("Binary (.PAL)");
+
+		private final String name;
+		PalChoices(String n) {
+			name = n;
+		}
+
+		public String toString() {
+			return name;
+		}
+	}
+
+	private static final JComboBox<PalChoices> palOptions = new JComboBox<PalChoices>(PalChoices.values());
 	private static final JFrame frame = new JFrame("PNGto4BPP " + SpriteManipulator.ALTTPNG_VERSION);
 
 	private static StringWriter debugLogging;
@@ -515,10 +525,9 @@ public class PNGto4BPP {
 			arg0 -> {
 				explorer.removeAllFilters();
 				explorer.setSelectedFile(EEE);
-				if (palOptions.getSelectedIndex() == 1) {
+				if (palOptions.getSelectedItem() == PalChoices.BIN) {
 					explorer.setFileFilter(binPalFilter);
-				}
-				else {
+				} else {
 					explorer.setFileFilter(palFilter);
 				}
 
@@ -644,7 +653,7 @@ public class PNGto4BPP {
 			// System.out.println(tokens[0]);
 
 			// imgSrc: Full Path for Image
-			// palOption: palFileOption [0:ASCII(.GPL|.PAL|.TXT), 1:Binary(YY-CHR .PAL), 2:Extract from Last Block of PNG]
+			// palOption: palFileOption - 0:Extract from Last Block of PNG], [1:ASCII(.GPL|.PAL|.TXT), 2:Binary(YY-CHR .PAL)
 			// palSrc:(Used if Option 0 or 1 selected) Full Path for Pal File.
 			// sprTarget: Name of Sprite that will be created.
 			if(tokens.length == 2) {
@@ -776,7 +785,7 @@ public class PNGto4BPP {
 		byte[] palData = null;
 		byte[] glovesData = null;
 		byte[][][] eightbyeight;
-		int palChoice = palOptions.getSelectedIndex(); // see which palette method we're using
+		PalChoices palChoice = (PalChoices) palOptions.getSelectedItem(); // see which palette method we're using
 
 		boolean extensionERR = false; // let the program spit out all extension errors at once
 		boolean patchingROM = false;
@@ -792,7 +801,7 @@ public class PNGto4BPP {
 		}
 
 		// test palette type
-		if (!SpriteManipulator.testFileType(paletteName, PALETTEEXTS) && (palChoice != 2)) {
+		if (!SpriteManipulator.testFileType(paletteName, PALETTEEXTS) && (palChoice != PalChoices.BLOCK)) {
 			if(paletteName.length() == 0) {
 				JOptionPane.showMessageDialog(frame,
 						"No palette source was specified despite using a palette method that requires it",
@@ -822,7 +831,7 @@ public class PNGto4BPP {
 				loc = "oops";
 			} finally {
 				// still add extension here so that the user isn't fooled into thinking they need this field
-				loc += " (exported)." + ZSPRFile.EXTENSION;
+				loc += "." + ZSPRFile.EXTENSION;
 			}
 		}
 
@@ -888,7 +897,7 @@ public class PNGto4BPP {
 		pixels = SpriteManipulator.roundRaster(pixels);
 
 		// explicit ASCII palette
-		if (palChoice == 0) {
+		if (palChoice == PalChoices.ASCII) {
 			// get palette file
 			try {
 				br = getFileReader(paletteName);
@@ -929,7 +938,7 @@ public class PNGto4BPP {
 		}
 
 		// binary pal
-		if (palChoice == 1) {
+		if (palChoice == PalChoices.BIN) {
 			if (!SpriteManipulator.testFileType(paletteName, "pal")) {
 				JOptionPane.showMessageDialog(frame,
 						"Binary palette reading must use a .PAL file",
@@ -947,7 +956,7 @@ public class PNGto4BPP {
 		}
 
 		// extract from last block
-		if (palChoice == 2) {
+		if (palChoice == PalChoices.BLOCK) {
 			palette = palExtract(pixels);
 			palData = SpriteManipulator.getPalDataFromArray(palette);
 		}
