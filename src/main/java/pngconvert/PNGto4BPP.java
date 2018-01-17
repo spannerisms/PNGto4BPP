@@ -484,7 +484,7 @@ public class PNGto4BPP {
 					if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 							desktop.browse(aa.toURI());
 					}
-				} catch (Exception e) {						
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(frame,
 							wikiWarn,
 							"Houston, we have a problem.",
